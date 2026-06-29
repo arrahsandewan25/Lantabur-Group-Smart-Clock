@@ -5,7 +5,6 @@ import Header from './components/Header';
 import WorldClocks from './components/WorldClocks';
 import SmartPrayerCard from './components/SmartPrayerCard';
 import WeatherWidget from './components/WeatherWidget';
-import CalendarCard from './components/CalendarCard';
 import NewsTicker from './components/NewsTicker';
 import AdminPanel from './components/AdminPanel';
 import { Settings, Cpu } from 'lucide-react';
@@ -28,13 +27,10 @@ const DashboardContent: React.FC = () => {
         {/* Row 1: Corporate Header */}
         <Header />
 
-        {/* Row 2: Live World Clocks Ticker */}
+        {/* Row 2: Live World Clocks Ticker (Expanded & Spacious) */}
         <WorldClocks />
 
-        {/* Row 3: Redesigned Smart Prayer Module */}
-        <SmartPrayerCard />
-
-        {/* Row 4: Main Operations Bento Grid */}
+        {/* Row 3: Main Operations Bento Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-grow">
           
           {/* Left Column: Environmental Station (6 cols) */}
@@ -44,10 +40,10 @@ const DashboardContent: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Holidays (6 cols) */}
+          {/* Right Column: Prayer Times node replacing Holidays (6 cols) */}
           <div className="lg:col-span-6 flex flex-col">
             <div className="flex-grow">
-              <CalendarCard />
+              <SmartPrayerCard />
             </div>
           </div>
 

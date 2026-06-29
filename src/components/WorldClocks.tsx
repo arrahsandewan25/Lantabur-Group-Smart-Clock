@@ -80,41 +80,101 @@ export const WorldClocks: React.FC = () => {
     }
   };
 
-  const getCityStyle = (index: number) => {
-    if (index % 2 === 0) {
-      return {
-        cardBg: 'bg-gradient-to-br from-amber-50 via-amber-100/80 to-yellow-150',
-        border: 'border-amber-300/90 shadow-[0_8px_20px_rgba(245,158,11,0.12)]',
-        textCity: 'text-amber-900 font-extrabold text-xs md:text-sm lg:text-base uppercase tracking-wider',
-        textTime: 'text-amber-950 font-black',
-        textSec: 'text-amber-600 font-bold',
-        textSub: 'text-amber-800 font-bold text-[10px] md:text-xs lg:text-sm',
-        glow: 'hover:shadow-[0_15px_35px_rgba(245,158,11,0.35)] hover:scale-[1.03] transform transition-all duration-300',
-        iconColor: 'text-amber-600'
-      };
-    } else {
-      return {
-        cardBg: 'bg-gradient-to-br from-orange-50 via-orange-100/80 to-amber-150',
-        border: 'border-orange-300/80 shadow-[0_8px_20px_rgba(249,115,22,0.12)]',
-        textCity: 'text-orange-900 font-extrabold text-xs md:text-sm lg:text-base uppercase tracking-wider',
-        textTime: 'text-orange-950 font-black',
-        textSec: 'text-orange-600 font-bold',
-        textSub: 'text-orange-800 font-bold text-[10px] md:text-xs lg:text-sm',
-        glow: 'hover:shadow-[0_15px_35px_rgba(249,115,22,0.35)] hover:scale-[1.03] transform transition-all duration-300',
-        iconColor: 'text-orange-600'
-      };
-    }
+  const CITY_BACKGROUNDS: Record<string, string> = {
+    'dhaka': 'https://images.unsplash.com/photo-1608958416719-797745778a4f?auto=format&fit=crop&q=90&w=3840',
+    'makkah': 'https://images.unsplash.com/photo-1591604021695-0c69b7c05981?auto=format&fit=crop&q=90&w=3840',
+    'dubai': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=90&w=3840',
+    'london': 'https://images.unsplash.com/photo-1513635269975-59663e0ca1ad?auto=format&fit=crop&q=90&w=3840',
+    'berlin': 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?auto=format&fit=crop&q=90&w=3840',
+    'new york': 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=90&w=3840'
   };
 
-  const getThemeGlow = () => {
-    switch (settings.themeColor) {
-      case 'cyan': return 'hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] hover:border-cyan-500/20';
-      case 'emerald': return 'hover:shadow-[0_0_20px_rgba(16,185,129,0.15)] hover:border-emerald-500/20';
-      case 'purple': return 'hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] hover:border-purple-500/20';
-      case 'pink': return 'hover:shadow-[0_0_20px_rgba(236,72,153,0.15)] hover:border-pink-500/20';
-      case 'amber': return 'hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] hover:border-amber-500/20';
-      default: return 'hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] hover:border-blue-500/20';
+  const getCityTheme = (cityName: string) => {
+    const name = cityName.toLowerCase();
+    const bg = CITY_BACKGROUNDS[name] || 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=85&w=1920';
+    
+    if (name.includes('makkah')) {
+      return {
+        bg,
+        border: 'border-amber-500/20 shadow-[0_8px_30px_rgba(245,158,11,0.15)]',
+        textCity: 'text-amber-100 font-extrabold text-sm md:text-base uppercase tracking-widest',
+        textTime: 'text-amber-300 drop-shadow-[0_0_12px_rgba(245,158,11,0.6)] font-black',
+        textSec: 'text-amber-500 font-bold',
+        textSub: 'text-amber-200/80 font-mono text-xs',
+        glow: 'hover:shadow-[0_15px_40px_rgba(245,158,11,0.35)] hover:border-amber-400/50 hover:scale-[1.03] transform transition-all duration-300',
+        iconColor: 'text-amber-400'
+      };
     }
+    if (name.includes('dhaka')) {
+      return {
+        bg,
+        border: 'border-cyan-500/20 shadow-[0_8px_30px_rgba(6,182,212,0.15)]',
+        textCity: 'text-cyan-100 font-extrabold text-sm md:text-base uppercase tracking-widest',
+        textTime: 'text-cyan-300 drop-shadow-[0_0_12px_rgba(6,182,212,0.6)] font-black',
+        textSec: 'text-cyan-500 font-bold',
+        textSub: 'text-cyan-200/80 font-mono text-xs',
+        glow: 'hover:shadow-[0_15px_40px_rgba(6,182,212,0.35)] hover:border-cyan-400/50 hover:scale-[1.03] transform transition-all duration-300',
+        iconColor: 'text-cyan-400'
+      };
+    }
+    if (name.includes('dubai')) {
+      return {
+        bg,
+        border: 'border-orange-500/20 shadow-[0_8px_30px_rgba(249,115,22,0.15)]',
+        textCity: 'text-orange-100 font-extrabold text-sm md:text-base uppercase tracking-widest',
+        textTime: 'text-orange-300 drop-shadow-[0_0_12px_rgba(249,115,22,0.6)] font-black',
+        textSec: 'text-orange-500 font-bold',
+        textSub: 'text-orange-200/80 font-mono text-xs',
+        glow: 'hover:shadow-[0_15px_40px_rgba(249,115,22,0.35)] hover:border-orange-400/50 hover:scale-[1.03] transform transition-all duration-300',
+        iconColor: 'text-orange-400'
+      };
+    }
+    if (name.includes('london')) {
+      return {
+        bg,
+        border: 'border-blue-500/20 shadow-[0_8px_30px_rgba(59,130,246,0.15)]',
+        textCity: 'text-blue-100 font-extrabold text-sm md:text-base uppercase tracking-widest',
+        textTime: 'text-blue-300 drop-shadow-[0_0_12px_rgba(59,130,246,0.6)] font-black',
+        textSec: 'text-blue-500 font-bold',
+        textSub: 'text-blue-200/80 font-mono text-xs',
+        glow: 'hover:shadow-[0_15px_40px_rgba(59,130,246,0.35)] hover:border-blue-400/50 hover:scale-[1.03] transform transition-all duration-300',
+        iconColor: 'text-blue-400'
+      };
+    }
+    if (name.includes('berlin')) {
+      return {
+        bg,
+        border: 'border-emerald-500/20 shadow-[0_8px_30px_rgba(16,185,129,0.15)]',
+        textCity: 'text-emerald-100 font-extrabold text-sm md:text-base uppercase tracking-widest',
+        textTime: 'text-emerald-300 drop-shadow-[0_0_12px_rgba(16,185,129,0.6)] font-black',
+        textSec: 'text-emerald-500 font-bold',
+        textSub: 'text-emerald-200/80 font-mono text-xs',
+        glow: 'hover:shadow-[0_15px_40px_rgba(16,185,129,0.35)] hover:border-emerald-400/50 hover:scale-[1.03] transform transition-all duration-300',
+        iconColor: 'text-emerald-400'
+      };
+    }
+    if (name.includes('new york')) {
+      return {
+        bg,
+        border: 'border-rose-500/20 shadow-[0_8px_30px_rgba(244,63,94,0.15)]',
+        textCity: 'text-rose-100 font-extrabold text-sm md:text-base uppercase tracking-widest',
+        textTime: 'text-rose-300 drop-shadow-[0_0_12px_rgba(244,63,94,0.6)] font-black',
+        textSec: 'text-rose-500 font-bold',
+        textSub: 'text-rose-200/80 font-mono text-xs',
+        glow: 'hover:shadow-[0_15px_40px_rgba(244,63,94,0.35)] hover:border-rose-400/50 hover:scale-[1.03] transform transition-all duration-300',
+        iconColor: 'text-rose-400'
+      };
+    }
+    return {
+      bg,
+      border: 'border-white/10 shadow-[0_8px_30px_rgba(255,255,255,0.05)]',
+      textCity: 'text-slate-100 font-extrabold text-sm md:text-base uppercase tracking-widest',
+      textTime: 'text-slate-100 drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] font-black',
+      textSec: 'text-slate-400 font-bold',
+      textSub: 'text-slate-300/80 font-mono text-xs',
+      glow: 'hover:shadow-[0_15px_40px_rgba(255,255,255,0.15)] hover:border-white/30 hover:scale-[1.03] transform transition-all duration-300',
+      iconColor: 'text-slate-300'
+    };
   };
 
   return (
@@ -129,38 +189,44 @@ export const WorldClocks: React.FC = () => {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
         {settings.cities.map((city, index) => {
           const { time, seconds, ampm, date, offset, isNight } = getLocalTimeParts(city.timezone);
-          const styles = getCityStyle(index);
+          const styles = getCityTheme(city.name);
 
           return (
             <div
               key={city.id}
-              className={`rounded-2xl p-4 md:p-6 lg:p-7 flex flex-col items-center justify-center text-center relative overflow-hidden group border transition-all duration-300 ${styles.cardBg} ${styles.border} ${styles.glow} min-h-[150px] md:min-h-[170px] lg:min-h-[190px]`}
+              className={`rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center relative overflow-hidden group border transition-all duration-300 ${styles.border} ${styles.glow} min-h-[170px] md:min-h-[190px] lg:min-h-[210px]`}
               id={`world-clock-${city.name.toLowerCase()}`}
             >
-              {/* Subtle warm ambient background blur glow */}
-              <div className="absolute -bottom-10 -right-10 w-24 h-24 rounded-full filter blur-xl opacity-30 pointer-events-none transition-all duration-1000 bg-amber-400/40"></div>
+              {/* Ultra High Resolution City Background Image */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-110 pointer-events-none"
+                style={{ backgroundImage: `url(${styles.bg})` }}
+              />
+              
+              {/* Elegant dark semi-transparent glassmorphism gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/45 to-slate-950/40 group-hover:from-slate-950/90 group-hover:via-slate-950/50 group-hover:to-slate-950/45 transition-colors duration-300 pointer-events-none" />
 
               {/* Title & Flag */}
-              <div className={`flex items-center gap-2 justify-center mb-2 select-none ${styles.textCity}`}>
-                <span className="text-base md:text-lg lg:text-xl">{city.flag}</span>
-                <span className="font-extrabold tracking-widest">{city.name}</span>
+              <div className={`flex items-center gap-2.5 justify-center mb-2.5 select-none ${styles.textCity} relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]`}>
+                <span className="text-xl md:text-2xl">{city.flag}</span>
+                <span className="font-extrabold tracking-widest text-sm md:text-base uppercase">{city.name}</span>
               </div>
 
               {/* Large Digital Clock Display */}
-              <div className={`digital-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black tracking-tight leading-none my-2 select-none ${styles.textTime}`}>
-                {time}<span className={`text-sm md:text-base lg:text-lg xl:text-xl font-bold ml-0.5 ${styles.textSec}`}>:{seconds}</span>
+              <div className={`digital-font text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight leading-none my-3 select-none ${styles.textTime} relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]`}>
+                {time}<span className={`text-base md:text-lg lg:text-xl font-bold ml-1 ${styles.textSec} drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]`}>:{seconds}</span>
               </div>
 
               {/* Period & Timezone Offset */}
-              <div className={`font-mono uppercase tracking-wider ${styles.textSub} mb-2`}>
-                <span className="font-extrabold">{ampm}</span> • {offset}
+              <div className={`font-mono uppercase tracking-wider ${styles.textSub} mb-2.5 text-xs relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]`}>
+                <span className="font-extrabold">{ampm}</span> • {offset} • <span className="text-[10px]">{date}</span>
               </div>
 
               {/* Weather Stats */}
-              <div className={`flex items-center gap-2 font-mono ${styles.textSub} opacity-90 group-hover:opacity-100 transition-opacity`}>
+              <div className={`flex items-center gap-2 font-mono ${styles.textSub} opacity-95 group-hover:opacity-100 transition-opacity text-xs md:text-sm relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]`}>
                 {getWeatherIcon(city.weatherCondition, isNight, styles.iconColor)}
                 <span className="font-bold">{city.tempOffset}°C</span>
               </div>

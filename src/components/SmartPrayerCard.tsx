@@ -26,7 +26,7 @@ export const SmartPrayerCard: React.FC = () => {
   if (!settings.widgetVisibility.prayerCard || !prayerState) return null;
 
   // Synthesize an elegant, multi-harmonic electronic gong/adhan alert bell using Web Audio API
-  const playNotificationChime = () => {
+  function playNotificationChime() {
     try {
       const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioContextClass) return;
@@ -66,7 +66,7 @@ export const SmartPrayerCard: React.FC = () => {
     } catch (e) {
       console.error('Failed to play synthesised notification chime', e);
     }
-  };
+  }
 
   const getPrayerIcon = (name: string) => {
     switch (name) {
@@ -105,15 +105,24 @@ export const SmartPrayerCard: React.FC = () => {
 
   return (
     <div
-      className={`glass-panel rounded-2xl p-5 border relative overflow-hidden flex flex-col justify-between transition-all duration-700 ${
+      className={`bg-slate-950/45 border-slate-800/40 backdrop-blur-md rounded-2xl p-5 border relative overflow-hidden flex flex-col justify-between transition-all duration-700 text-white shadow-2xl ${
         prayer === 'Asr' || prayer === 'Fajr' ? 'glow-amber border-amber-500/20' :
         prayer === 'Maghrib' ? 'glow-amber border-rose-500/20' :
         prayer === 'Isha' || prayer === 'Tahajjud' ? 'glow-blue border-indigo-500/20' : 'glow-green border-emerald-500/20'
       }`}
       id="smart-prayer-card"
     >
+      {/* High-Resolution Al-Masjid an-Nabawi Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out pointer-events-none scale-105"
+        style={{ backgroundImage: `url('https://stock.adobe.com/images/al-masjid-an-nabawi-mosque-in-medina-saudi-arabia-during-golden-hour/1884567289')` }}
+      />
+      
+      {/* Elegant dark semi-transparent glassmorphism gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/45 to-slate-950/40 pointer-events-none" />
+
       {/* Background soft glow based on prayer status */}
-      <div className={`absolute -inset-24 rounded-full filter blur-3xl opacity-10 pointer-events-none bg-current`}></div>
+      <div className="absolute -inset-24 rounded-full filter blur-3xl opacity-10 pointer-events-none bg-current"></div>
 
       {/* Header with status badges and mute toggler */}
       <div className="flex items-center justify-between relative z-10 border-b border-white/5 pb-2.5">
@@ -121,14 +130,14 @@ export const SmartPrayerCard: React.FC = () => {
           <span className="text-[9px] font-mono uppercase tracking-widest font-black bg-white/5 border border-white/10 px-2 py-0.5 rounded text-slate-300">
             {type === 'CURRENT' ? 'CURRENT PRAYER' : 'NEXT PRAYER'}
           </span>
-          <span className="text-[9px] text-slate-500 font-mono">
+          <span className="text-[9px] text-slate-300 font-mono">
             {settings.prayerMethod} • {settings.prayerMadhhab === 'Hanafi' ? 'Hanafi' : 'Standard'}
           </span>
         </div>
 
         <button
           onClick={() => setIsAdhanMuted(!isAdhanMuted)}
-          className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-white/5 bg-white/5 hover:border-white/15 transition-all text-slate-400 hover:text-white"
+          className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-white/10 bg-white/5 hover:border-white/20 transition-all text-slate-300 hover:text-white"
           title={isAdhanMuted ? "Enable chime" : "Mute chime"}
         >
           {isAdhanMuted ? (
@@ -146,21 +155,21 @@ export const SmartPrayerCard: React.FC = () => {
       </div>
 
       {/* Main Body - Beautifully Balanced Circular Layout */}
-      <div className="flex flex-col md:flex-row items-center justify-around gap-6 my-4 relative z-10">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 my-4 items-center justify-items-center relative z-10">
         
         {/* Left Side: Detail metadata */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <div className="label text-slate-400 font-semibold mb-1">Operational Node</div>
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1 rounded-lg">
+        <div className="flex flex-col items-center sm:items-start lg:items-center xl:items-start text-center sm:text-left lg:text-center xl:text-left">
+          <div className="label text-slate-200 font-semibold mb-1 drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">Operational Node</div>
+          <div className="flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-1 rounded-lg backdrop-blur-md shadow-lg">
             {getPrayerIcon(prayer)}
             <div>
-              <h3 className="font-mono text-xl font-black text-white uppercase tracking-wider">
+              <h3 className="font-mono text-xl font-black text-white uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                 {prayer}
               </h3>
-              <span className="text-[8px] font-mono text-slate-500 uppercase block">Active Interval</span>
+              <span className="text-[8px] font-mono text-slate-300 uppercase block drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Active Interval</span>
             </div>
           </div>
-          <div className="mt-2.5 space-y-0.5 text-[10px] text-slate-400 font-mono">
+          <div className="mt-2.5 space-y-0.5 text-[10px] text-slate-200 font-mono drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">
             <div>🌅 Started: <span className="text-white font-semibold">{formatTimeHM(startTime)}</span></div>
             <div>🌇 Target: <span className="text-white font-semibold">{formatTimeHM(endTime)}</span></div>
           </div>
@@ -184,7 +193,7 @@ export const SmartPrayerCard: React.FC = () => {
               cx="80"
               cy="80"
               r={radius + 8}
-              className="transition-all duration-1000"
+              className="transition-all duration-1000 animate-pulse"
               strokeWidth="7"
               strokeDasharray={2 * Math.PI * (radius + 8)}
               strokeDashoffset={2 * Math.PI * (radius + 8) - (progress / 100) * (2 * Math.PI * (radius + 8))}
@@ -200,22 +209,22 @@ export const SmartPrayerCard: React.FC = () => {
 
           {/* Core display inside ring */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[10px] text-slate-400 font-mono tracking-widest uppercase font-bold">
+            <span className="text-[10px] text-slate-200 font-mono tracking-widest uppercase font-bold drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">
               {type === 'CURRENT' ? 'REMAINING' : 'STARTS IN'}
             </span>
-            <span className="digital-font text-base md:text-lg text-white font-bold tracking-tight my-0.5 select-none">
+            <span className="digital-font text-base md:text-lg text-white font-bold tracking-tight my-0.5 select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               {formatDuration(timeRemainingMs)}
             </span>
-            <span className="text-[10px] text-slate-400 font-mono font-bold">
+            <span className="text-[10px] text-slate-200 font-mono font-bold drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">
               {Math.round(progress)}% COMPLETED
             </span>
           </div>
         </div>
 
         {/* Right Side: Progress Bar details */}
-        <div className="flex flex-col items-center md:items-end text-center md:text-right w-full md:w-auto">
-          <span className="label text-slate-400 font-semibold mb-1">State Progress</span>
-          <div className="w-44 bg-black/40 rounded-full h-1.5 overflow-hidden border border-white/5 mb-2">
+        <div className="flex flex-col items-center sm:items-end lg:items-center xl:items-end text-center sm:text-right lg:text-center xl:text-right w-full sm:w-auto lg:w-full xl:w-auto">
+          <span className="label text-slate-200 font-semibold mb-1 drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">State Progress</span>
+          <div className="w-44 bg-black/40 rounded-full h-1.5 overflow-hidden border border-white/15 mb-2">
             <div
               className={`h-full rounded-full transition-all duration-1000 ${
                 prayer === 'Asr' || prayer === 'Fajr' ? 'bg-amber-500' :
@@ -225,9 +234,9 @@ export const SmartPrayerCard: React.FC = () => {
               style={{ width: `${progress}%` }}
             ></div>
           </div>
-          <div className="text-[10px] text-slate-400 font-mono leading-relaxed">
+          <div className="text-[10px] text-slate-200 font-mono leading-relaxed drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">
             <div>Next Event: <span className="text-white font-bold">{prayer === 'Isha' ? 'Tahajjud' : prayer === 'Tahajjud' ? 'Fajr' : prayer === 'Fajr' ? 'Dhuhr' : prayer === 'Dhuhr' ? 'Asr' : prayer === 'Asr' ? 'Maghrib' : 'Isha'}</span></div>
-            <div className="text-[8px] text-slate-500 uppercase tracking-widest mt-0.5">Calculations live</div>
+            <div className="text-[8px] text-slate-300 uppercase tracking-widest mt-0.5">Calculations live</div>
           </div>
         </div>
 

@@ -1,9 +1,15 @@
 import React from 'react';
 import { useDashboard } from '../context/DashboardContext';
-import { Calendar, Gift, Backpack, Building, ArrowRight, Star } from 'lucide-react';
+import { Calendar, Gift, Backpack, Building, ArrowRight, Star, RefreshCw } from 'lucide-react';
 
 export const CalendarCard: React.FC = () => {
-  const { settings, currentTime } = useDashboard();
+  const { 
+    settings, 
+    currentTime, 
+    isGoogleCalendarSynced, 
+    isGoogleCalendarLoading, 
+    syncGoogleCalendar 
+  } = useDashboard();
 
   if (!settings.widgetVisibility.calendar) return null;
 
@@ -45,12 +51,30 @@ export const CalendarCard: React.FC = () => {
       <div className="absolute -bottom-12 -left-12 w-32 h-32 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
 
       {/* Header */}
-      <div className="border-b border-white/5 pb-3">
-        <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-          <Calendar className="w-4 h-4 text-cyan-400" />
-          Holidays
-        </h3>
-        <p className="text-[10px] font-mono text-slate-500 mt-0.5">National & Public Holiday Tracker</p>
+      <div className="border-b border-white/5 pb-3 flex items-start justify-between">
+        <div>
+          <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+            <Calendar className="w-4 h-4 text-cyan-400" />
+            Holidays
+          </h3>
+          <p className="text-[10px] font-mono text-slate-500 mt-0.5">National & Public Holiday Tracker</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {isGoogleCalendarSynced && (
+            <span className="text-[8px] font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-1.5 py-0.5 rounded flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+              Google Calendar
+            </span>
+          )}
+          <button 
+            onClick={() => syncGoogleCalendar()}
+            disabled={isGoogleCalendarLoading}
+            className={`p-1 rounded hover:bg-white/5 text-slate-400 hover:text-slate-200 transition-all ${isGoogleCalendarLoading ? 'animate-spin' : ''}`}
+            title="Sync Google Calendar"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
 
 

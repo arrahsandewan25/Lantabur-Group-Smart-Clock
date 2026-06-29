@@ -20,6 +20,9 @@ interface DashboardContextType {
   isGeneratingBriefing: boolean;
   generateAIBriefing: () => Promise<void>;
   resetToDefault: () => void;
+  isGoogleCalendarSynced: boolean;
+  isGoogleCalendarLoading: boolean;
+  syncGoogleCalendar: () => Promise<void>;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -118,12 +121,60 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       "Welcome to Lantabur Operations Command. System checks: Normal. Connection: Established. All global operational nodes are synched.";
   });
   const [isGeneratingBriefing, setIsGeneratingBriefing] = useState<boolean>(false);
+  const [isGoogleCalendarSynced, setIsGoogleCalendarSynced] = useState<boolean>(false);
+  const [isGoogleCalendarLoading, setIsGoogleCalendarLoading] = useState<boolean>(false);
+
+  const syncGoogleCalendar = async () => {
+    setIsGoogleCalendarLoading(true);
+    try {
+      const response = await fetch('/api/calendar');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.authenticated && data.events && Array.isArray(data.events)) {
+          setSettings((prev) => {
+            const localCompanyEvents = prev.boardEvents.filter(e => e.type === 'company');
+            const mergedEvents = [...localCompanyEvents, ...data.events];
+            const seen = new Set();
+            const uniqueEvents = [];
+            for (const event of mergedEvents) {
+              const key = `${event.title}_${event.date}`;
+              if (!seen.has(key)) {
+                seen.add(key);
+                uniqueEvents.push(event);
+              }
+            }
+            return {
+              ...prev,
+              boardEvents: uniqueEvents
+            };
+          });
+          setIsGoogleCalendarSynced(true);
+        } else {
+          setIsGoogleCalendarSynced(false);
+        }
+      } else {
+        setIsGoogleCalendarSynced(false);
+      }
+    } catch (e) {
+      console.error("Failed to fetch Google Calendar events:", e);
+      setIsGoogleCalendarSynced(false);
+    } finally {
+      setIsGoogleCalendarLoading(false);
+    }
+  };
 
   // Synchronous ticking clock
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Sync Google Calendar on mount and periodically
+  useEffect(() => {
+    syncGoogleCalendar();
+    const interval = setInterval(syncGoogleCalendar, 120000); // 2 minutes refresh
     return () => clearInterval(interval);
   }, []);
 
@@ -297,7 +348,10 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         activeBriefing,
         isGeneratingBriefing,
         generateAIBriefing,
-        resetToDefault
+        resetToDefault,
+        isGoogleCalendarSynced,
+        isGoogleCalendarLoading,
+        syncGoogleCalendar
       }}
     >
       {children}
