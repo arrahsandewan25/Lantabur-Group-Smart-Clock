@@ -86,7 +86,7 @@ export const WorldClocks: React.FC = () => {
     'dubai': '/Dubai.jpg',
     'london': '/London.jpg',
     'berlin': '/Berlin.jpg',
-    'new york': '/New York.jpg'
+    'new york': '/New%20York.jpg'
   };
 
   const getCityTheme = (cityName: string) => {
