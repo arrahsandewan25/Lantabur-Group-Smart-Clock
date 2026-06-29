@@ -30,6 +30,10 @@ async function startServer() {
   let cachedNewsTime = 0;
   const NEWS_CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
 
+  // In-memory cache for live weather grounding
+  let cachedWeather: any = null;
+  let cachedWeatherTime = 0;
+
   app.use(express.json());
 
   // Health check endpoint
@@ -151,6 +155,100 @@ Requirements:
         return res.json({ news: cachedNews });
       }
       return res.json({ news: FALLBACK_NEWS });
+    }
+  });
+
+  // Real-time Dhaka Weather synced with Google Weather via search grounding
+  app.get("/api/dhaka-weather", async (req, res) => {
+    const FALLBACK_WEATHER = {
+      temp: 31,
+      condition: "Sunny",
+      feelsLike: 35,
+      humidity: 72,
+      wind: 12,
+      rainChance: 15,
+      uvIndex: 8,
+      sunrise: "05:46 AM",
+      sunset: "06:47 PM"
+    };
+
+    try {
+      const now = Date.now();
+      // Cache weather for 15 minutes to stay real-time while avoiding rate limits
+      if (cachedWeather && (now - cachedWeatherTime < 15 * 60 * 1000)) {
+        return res.json(cachedWeather);
+      }
+
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey || apiKey === "MY_GEMINI_API_KEY") {
+        console.warn("Gemini API key is not configured for weather search grounding. Using fallback.");
+        return res.json(FALLBACK_WEATHER);
+      }
+
+      const ai = new GoogleGenAI({
+        apiKey: apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          }
+        }
+      });
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: "Perform a Google Search to find the absolute latest current real-time weather details for Dhaka, Bangladesh right now. Return a JSON object with these EXACT keys: 'temp' (number in Celsius), 'condition' (string, must be one of: 'Sunny', 'Clear', 'Rainy', 'Cloudy', 'Hazy'), 'feelsLike' (number in Celsius), 'humidity' (number percentage, e.g. 72), 'wind' (number in km/h), 'rainChance' (number percentage of precipitation), 'uvIndex' (number from 0 to 12), 'sunrise' (string format e.g. '05:46 AM'), 'sunset' (string format e.g. '06:47 PM'). Ensure that values are accurate for today.",
+        config: {
+          tools: [{ googleSearch: {} }],
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              temp: { type: Type.NUMBER },
+              condition: { type: Type.STRING },
+              feelsLike: { type: Type.NUMBER },
+              humidity: { type: Type.NUMBER },
+              wind: { type: Type.NUMBER },
+              rainChance: { type: Type.NUMBER },
+              uvIndex: { type: Type.NUMBER },
+              sunrise: { type: Type.STRING },
+              sunset: { type: Type.STRING }
+            },
+            required: ["temp", "condition", "feelsLike", "humidity", "wind", "rainChance", "uvIndex", "sunrise", "sunset"]
+          }
+        }
+      });
+
+      const text = response.text;
+      if (text) {
+        const weatherObj = JSON.parse(text);
+        if (weatherObj && typeof weatherObj.temp === 'number') {
+          // Normalize condition to valid values
+          const conditionLower = (weatherObj.condition || 'Sunny').toLowerCase();
+          if (conditionLower.includes('rain') || conditionLower.includes('drizzle') || conditionLower.includes('shower')) {
+            weatherObj.condition = 'Rainy';
+          } else if (conditionLower.includes('cloud') || conditionLower.includes('overcast') || conditionLower.includes('partly')) {
+            weatherObj.condition = 'Cloudy';
+          } else if (conditionLower.includes('haze') || conditionLower.includes('hazy') || conditionLower.includes('mist') || conditionLower.includes('fog')) {
+            weatherObj.condition = 'Hazy';
+          } else if (conditionLower.includes('clear') || conditionLower.includes('night')) {
+            weatherObj.condition = 'Clear';
+          } else {
+            weatherObj.condition = 'Sunny';
+          }
+
+          cachedWeather = weatherObj;
+          cachedWeatherTime = now;
+          return res.json(cachedWeather);
+        }
+      }
+
+      throw new Error("Invalid response format from Gemini weather search grounding");
+    } catch (error: any) {
+      console.warn("Soft warning: Weather search grounding request failed. Serving cached/fallback weather content.", error);
+      if (cachedWeather) {
+        return res.json(cachedWeather);
+      }
+      return res.json(FALLBACK_WEATHER);
     }
   });
 

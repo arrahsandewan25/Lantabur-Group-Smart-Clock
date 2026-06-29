@@ -28,12 +28,12 @@ interface DashboardContextType {
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 const DEFAULT_CITIES: CityClockConfig[] = [
-  { id: '2', name: 'Makkah', flag: '🇸🇦', timezone: 'Asia/Riyadh', tempOffset: 38, weatherCondition: 'Clear' },
-  { id: '3', name: 'Dubai', flag: '🇦🇪', timezone: 'Asia/Dubai', tempOffset: 35, weatherCondition: 'Hazy' },
-  { id: '4', name: 'London', flag: '🇬🇧', timezone: 'Europe/London', tempOffset: 19, weatherCondition: 'Rainy' },
-  { id: '5', name: 'Berlin', flag: '🇩🇪', timezone: 'Europe/Berlin', tempOffset: 22, weatherCondition: 'Cloudy' },
-  { id: '6', name: 'New York', flag: '🇺🇸', timezone: 'America/New_York', tempOffset: 26, weatherCondition: 'Partly Cloudy' },
-  { id: '1', name: 'Dhaka', flag: '🇧🇩', timezone: 'Asia/Dhaka', tempOffset: 31, weatherCondition: 'Sunny' }
+  { id: '2', name: 'Makkah', flag: '', timezone: 'Asia/Riyadh', tempOffset: 38, weatherCondition: 'Clear' },
+  { id: '3', name: 'Dubai', flag: '', timezone: 'Asia/Dubai', tempOffset: 35, weatherCondition: 'Hazy' },
+  { id: '4', name: 'London', flag: '', timezone: 'Europe/London', tempOffset: 19, weatherCondition: 'Rainy' },
+  { id: '5', name: 'Berlin', flag: '', timezone: 'Europe/Berlin', tempOffset: 22, weatherCondition: 'Cloudy' },
+  { id: '6', name: 'New York', flag: '', timezone: 'America/New_York', tempOffset: 26, weatherCondition: 'Partly Cloudy' },
+  { id: '1', name: 'Dhaka', flag: '', timezone: 'Asia/Dhaka', tempOffset: 31, weatherCondition: 'Sunny' }
 ];
 
 const DEFAULT_ANNOUNCEMENTS: Announcement[] = [

@@ -1,9 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDashboard } from '../context/DashboardContext';
 import { CloudSun, Thermometer, Droplets, Wind, CloudRain, Sun, Moon } from 'lucide-react';
 
 export const WeatherWidget: React.FC = () => {
   const { settings, currentTime } = useDashboard();
+  const [realTimeWeather, setRealTimeWeather] = useState<{
+    temp: number;
+    condition: string;
+    feelsLike: number;
+    humidity: number;
+    wind: number;
+    rainChance: number;
+    uvIndex: number;
+    sunrise: string;
+    sunset: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const res = await fetch('/api/dhaka-weather');
+        if (res.ok) {
+          const data = await res.json();
+          setRealTimeWeather(data);
+        }
+      } catch (err) {
+        console.warn("Could not load real-time Dhaka weather from API, using fallback calculations.", err);
+      }
+    };
+    fetchWeather();
+    const interval = setInterval(fetchWeather, 5 * 60 * 1000); // refresh every 5 mins
+    return () => clearInterval(interval);
+  }, []);
 
   if (!settings.widgetVisibility.weather) return null;
 
@@ -38,21 +66,21 @@ export const WeatherWidget: React.FC = () => {
   const diurnalOffset = Math.cos(timeRad) * 4.0; // +/- 4°C fluctuation over 24 hours
   // Tiny live telemetry jitter using seconds to make the UI feel alive
   const jitter = Math.sin((currentTime.getSeconds() * Math.PI) / 30) * 0.2;
-  const temp = parseFloat((baseOffset + diurnalOffset + jitter).toFixed(1));
+  const calculatedTemp = parseFloat((baseOffset + diurnalOffset + jitter).toFixed(1));
 
   // 2. Dynamic Humidity (higher at night/morning, lower in hot afternoons)
   const humidityRad = ((dhakaHour - 5) * Math.PI) / 12; // Peak humidity at 5 AM
   const baseHumidity = 72;
   const humidityOffset = Math.cos(humidityRad) * 12; // +/- 12% fluctuation
   const humidityJitter = Math.cos((currentTime.getSeconds() * Math.PI) / 30) * 1.5;
-  const humidity = Math.min(98, Math.max(30, Math.round(baseHumidity + humidityOffset + humidityJitter)));
+  const calculatedHumidity = Math.min(98, Math.max(30, Math.round(baseHumidity + humidityOffset + humidityJitter)));
 
   // 3. Dynamic Wind speed (peaks slightly in afternoon, calmer at night)
   const windRad = ((dhakaHour - 14) * Math.PI) / 12;
   const baseWind = 12;
   const windOffset = Math.cos(windRad) * 4;
   const windJitter = Math.sin((currentTime.getSeconds() * Math.PI) / 15) * 1.0;
-  const wind = Math.min(25, Math.max(3, Math.round(baseWind + windOffset + windJitter)));
+  const calculatedWind = Math.min(25, Math.max(3, Math.round(baseWind + windOffset + windJitter)));
 
   // 4. Dynamic Precipitation based on configured weather condition
   const configCondition = (dhakaCity?.weatherCondition || 'Sunny').toLowerCase();
@@ -63,25 +91,36 @@ export const WeatherWidget: React.FC = () => {
   else baseRainChance = 5;
 
   const rainJitter = Math.sin((currentTime.getSeconds() * Math.PI) / 45) * 2;
-  const rainChance = Math.min(100, Math.max(0, Math.round(baseRainChance + rainJitter)));
+  const calculatedRainChance = Math.min(100, Math.max(0, Math.round(baseRainChance + rainJitter)));
 
   // 5. Dynamic UV Index (0 at night, peaks in midday sun)
-  let uvIndex = 0;
+  let calculatedUvIndex = 0;
   if (dhakaHour >= 6 && dhakaHour < 18) {
     const uvFactor = Math.sin(((dhakaHour - 6) * Math.PI) / 12); // Peaks at 12 PM
-    uvIndex = Math.round(uvFactor * 9);
+    calculatedUvIndex = Math.round(uvFactor * 9);
   }
 
   // 6. Dynamic Feels Like
-  const feelsLike = parseFloat((temp + (humidity > 60 ? (humidity - 60) * 0.12 : 0)).toFixed(1));
+  const calculatedFeelsLike = parseFloat((calculatedTemp + (calculatedHumidity > 60 ? (calculatedHumidity - 60) * 0.12 : 0)).toFixed(1));
 
-  // 7. Dynamic Weather Condition Title
+  // Select dynamic or grounded weather
+  const temp = realTimeWeather ? realTimeWeather.temp : calculatedTemp;
+  const condition = (realTimeWeather ? realTimeWeather.condition : configCondition).toLowerCase();
+  const feelsLike = realTimeWeather ? realTimeWeather.feelsLike : calculatedFeelsLike;
+  const humidity = realTimeWeather ? realTimeWeather.humidity : calculatedHumidity;
+  const wind = realTimeWeather ? realTimeWeather.wind : calculatedWind;
+  const rainChance = realTimeWeather ? realTimeWeather.rainChance : calculatedRainChance;
+  const uvIndex = realTimeWeather ? realTimeWeather.uvIndex : calculatedUvIndex;
+  const sunrise = realTimeWeather ? realTimeWeather.sunrise : "05:46 AM";
+  const sunset = realTimeWeather ? realTimeWeather.sunset : "06:47 PM";
+
+  // Dynamic Weather Condition Title
   let displayCondition = 'Sunny & Clear';
-  if (configCondition === 'rainy') {
+  if (condition === 'rainy') {
     displayCondition = isNight ? 'Rainy Night' : 'Rainy & Wet';
-  } else if (configCondition === 'cloudy') {
+  } else if (condition === 'cloudy') {
     displayCondition = isNight ? 'Cloudy Night' : 'Mostly Cloudy';
-  } else if (configCondition === 'hazy') {
+  } else if (condition === 'hazy') {
     displayCondition = isNight ? 'Hazy Night' : 'Hazy Mist';
   } else {
     displayCondition = isNight ? 'Clear Night' : 'Sunny & Clear';
@@ -99,10 +138,10 @@ export const WeatherWidget: React.FC = () => {
   // Dynamic Icon selector
   const getWeatherIcon = () => {
     const iconClass = "w-14 h-14 animate-pulse duration-[3000ms] relative z-10";
-    if (configCondition === 'rainy') {
+    if (condition === 'rainy') {
       return <CloudRain className={`${iconClass} text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.4)]`} />;
     }
-    if (configCondition === 'cloudy') {
+    if (condition === 'cloudy') {
       return <CloudSun className={`${iconClass} text-slate-300 drop-shadow-[0_0_12px_rgba(203,213,225,0.4)]`} />;
     }
     if (isNight) {
@@ -194,8 +233,8 @@ export const WeatherWidget: React.FC = () => {
 
       {/* Solar Transitions */}
       <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono pt-2">
-        <span>🌅 Sunrise: <span className="text-slate-300 font-semibold">05:46 AM</span></span>
-        <span>🌇 Sunset: <span className="text-slate-300 font-semibold">06:47 PM</span></span>
+        <span>🌅 Sunrise: <span className="text-slate-300 font-semibold">{sunrise}</span></span>
+        <span>🌇 Sunset: <span className="text-slate-300 font-semibold">{sunset}</span></span>
       </div>
     </div>
   );

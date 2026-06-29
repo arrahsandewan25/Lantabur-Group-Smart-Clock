@@ -43,6 +43,24 @@ export const Header: React.FC = () => {
     }
   };
 
+  const getDhakaHour = (): number => {
+    try {
+      return parseInt(
+        new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Dhaka',
+          hour: 'numeric',
+          hour12: false,
+        }).format(currentTime),
+        10
+      );
+    } catch {
+      return new Date(currentTime.getTime() + 6 * 60 * 60 * 1000).getUTCHours();
+    }
+  };
+
+  const dhakaHour = getDhakaHour();
+  const activeShift = (dhakaHour >= 6 && dhakaHour < 18) ? 'Day Shift' : 'Night Shift';
+
   return (
     <header className="w-full glass-panel rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 border border-white/10 relative overflow-hidden">
       {/* Decorative top lighting element */}
@@ -84,10 +102,10 @@ export const Header: React.FC = () => {
         <div className="text-left">
           <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-widest">Active Shift</span>
           <span className={`text-xs font-bold uppercase tracking-wide flex items-center gap-1.5 ${
-            settings.shift.toLowerCase().includes('day') ? 'text-amber-400' : 'text-indigo-300'
+            activeShift.toLowerCase().includes('day') ? 'text-amber-400' : 'text-indigo-300'
           }`}>
             <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping"></span>
-            {settings.shift}
+            {activeShift}
           </span>
         </div>
       </div>

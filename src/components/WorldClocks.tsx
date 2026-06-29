@@ -238,9 +238,8 @@ export const WorldClocks: React.FC = () => {
               {/* Elegant dark semi-transparent glassmorphism gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/45 to-slate-950/40 group-hover:from-slate-950/90 group-hover:via-slate-950/50 group-hover:to-slate-950/45 transition-colors duration-300 pointer-events-none" />
 
-              {/* Title & Flag */}
+              {/* Title without Flag */}
               <div className={`flex items-center gap-2.5 justify-center mb-2.5 select-none ${styles.textCity} relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]`}>
-                <span className="text-xl md:text-2xl">{city.flag}</span>
                 <span className="font-extrabold tracking-widest text-sm md:text-base uppercase">{cleanName}</span>
               </div>
 

@@ -24,7 +24,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<'branding' | 'widgets' | 'clocks' | 'prayer' | 'announcements' | 'news'>('branding');
 
   // Input states
-  const [newCity, setNewCity] = useState({ name: '', flag: '🇧🇩', timezone: 'Asia/Dhaka', tempOffset: 30, weatherCondition: 'Sunny' });
+  const [newCity, setNewCity] = useState({ name: '', flag: '', timezone: 'Asia/Dhaka', tempOffset: 30, weatherCondition: 'Sunny' });
   const [newAnnouncement, setNewAnnouncement] = useState({ title: '', content: '', type: 'info' as 'info' | 'success' | 'warning' | 'birthday', timestamp: 'Just Now' });
   const [newNews, setNewNews] = useState('');
   const [newEvent, setNewEvent] = useState({ title: '', date: '', type: 'company' as 'company' | 'school' | 'public' });
@@ -36,7 +36,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     e.preventDefault();
     if (!newCity.name || !newCity.timezone) return;
     addCity(newCity);
-    setNewCity({ name: '', flag: '🇧🇩', timezone: 'Asia/Dhaka', tempOffset: 30, weatherCondition: 'Sunny' });
+    setNewCity({ name: '', flag: '', timezone: 'Asia/Dhaka', tempOffset: 30, weatherCondition: 'Sunny' });
   };
 
   const handleAddAnnouncement = (e: React.FormEvent) => {
@@ -300,24 +300,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               Add New Clock Node
             </span>
             <form onSubmit={handleAddCity} className="space-y-3 bg-slate-900/40 p-4 rounded-xl border border-white/5">
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  value={newCity.name}
-                  onChange={(e) => setNewCity({ ...newCity, name: e.target.value })}
-                  placeholder="City Name"
-                  className="bg-slate-900 border border-white/10 rounded-lg py-1.5 px-3 text-xs text-white"
-                  required
-                />
-                <input
-                  type="text"
-                  value={newCity.flag}
-                  onChange={(e) => setNewCity({ ...newCity, flag: e.target.value })}
-                  placeholder="Flag Emoji"
-                  className="bg-slate-900 border border-white/10 rounded-lg py-1.5 px-3 text-xs text-white"
-                  required
-                />
-              </div>
+              <input
+                type="text"
+                value={newCity.name}
+                onChange={(e) => setNewCity({ ...newCity, name: e.target.value })}
+                placeholder="City Name"
+                className="w-full bg-slate-900 border border-white/10 rounded-lg py-1.5 px-3 text-xs text-white"
+                required
+              />
 
               <input
                 type="text"
@@ -370,7 +360,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                 return (
                   <div key={city.id} className="flex items-center justify-between p-2 rounded bg-slate-900 border border-white/5">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm">{city.flag}</span>
                       <span className="text-xs font-semibold text-slate-200">{cleanCityName}</span>
                       <span className="text-[9px] text-slate-500 font-mono">({city.timezone})</span>
                     </div>
