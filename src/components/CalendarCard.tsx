@@ -53,34 +53,7 @@ export const CalendarCard: React.FC = () => {
         <p className="text-[10px] font-mono text-slate-500 mt-0.5">National & Public Holiday Tracker</p>
       </div>
 
-      {/* Holiday Countdown Section */}
-      {nextHoliday && (
-        <div className="my-4 bg-white/5 border border-white/10 rounded-xl p-4 flex items-center justify-between">
-          <div>
-            <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400 font-bold block">
-              Up Next Countdown
-            </span>
-            <h4 className="font-display font-bold text-sm text-white mt-0.5 flex items-center gap-1.5">
-              {nextHoliday.title}
-              <span className={`text-[8px] font-mono px-2 py-0.5 rounded-full capitalize ${getEventBadgeClass(nextHoliday.type)}`}>
-                {nextHoliday.type}
-              </span>
-            </h4>
-            <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">
-              On {new Date(nextHoliday.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-            </span>
-          </div>
 
-          <div className="text-right">
-            <span className="text-2xl font-mono font-black text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]">
-              {getDaysCountdown(nextHoliday.date)}
-            </span>
-            <span className="text-[8px] font-mono text-slate-400 block uppercase tracking-wider mt-0.5">
-              {getDaysCountdown(nextHoliday.date) === 1 ? 'Day Left' : 'Days Left'}
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* List of upcoming milestones */}
       <div className="flex-grow my-2">

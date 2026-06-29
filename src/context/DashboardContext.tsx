@@ -94,7 +94,11 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       const saved = localStorage.getItem('lantabur_settings');
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (!parsed.logoUrl || parsed.logoUrl.includes('lantabur_logo_1782702424680') || parsed.logoUrl.includes('Lantabur Group Logo.jpg')) {
+          parsed.logoUrl = defaultLogo;
+        }
+        return parsed;
       }
     } catch (e) {
       console.error("Failed to load settings", e);
@@ -114,6 +118,29 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch live top news from Bangladesh and international sources on mount
+  useEffect(() => {
+    const fetchLiveNews = async () => {
+      try {
+        const response = await fetch('/api/news');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.news && Array.isArray(data.news) && data.news.length > 0) {
+            setSettings((prev) => ({
+              ...prev,
+              newsSources: data.news
+            }));
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch live news from dashboard api:", e);
+      }
+    };
+    fetchLiveNews();
+    const interval = setInterval(fetchLiveNews, 300000); // 5 minutes refresh
     return () => clearInterval(interval);
   }, []);
 
