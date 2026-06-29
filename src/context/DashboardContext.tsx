@@ -32,7 +32,7 @@ const DEFAULT_CITIES: CityClockConfig[] = [
   { id: '5', name: 'Berlin', flag: '🇩🇪', timezone: 'Europe/Berlin', tempOffset: 22, weatherCondition: 'Cloudy' },
   { id: '6', name: 'New York', flag: '🇺🇸', timezone: 'America/New_York', tempOffset: 26, weatherCondition: 'Partly Cloudy' },
   { id: '7', name: 'Tokyo', flag: '🇯🇵', timezone: 'Asia/Tokyo', tempOffset: 24, weatherCondition: 'Sunny' },
-  { id: '8', name: 'Singapore', flag: '🇸🇬', timezone: 'Asia/Singapore', tempOffset: 30, weatherCondition: 'Humid' }
+  { id: '8', name: 'Beijing', flag: '🇨🇳', timezone: 'Asia/Shanghai', tempOffset: 28, weatherCondition: 'Sunny' }
 ];
 
 const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
@@ -97,6 +97,14 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const parsed = JSON.parse(saved);
         if (!parsed.logoUrl || parsed.logoUrl.includes('lantabur_logo_1782702424680') || parsed.logoUrl.includes('Lantabur Group Logo.jpg')) {
           parsed.logoUrl = defaultLogo;
+        }
+        if (parsed.cities && Array.isArray(parsed.cities)) {
+          parsed.cities = parsed.cities.map((city: any) => {
+            if (city.timezone === 'Asia/Singapore' || city.name === 'Singapore') {
+              return { id: city.id || '8', name: 'Beijing', flag: '🇨🇳', timezone: 'Asia/Shanghai', tempOffset: 28, weatherCondition: 'Sunny' };
+            }
+            return city;
+          });
         }
         return parsed;
       }

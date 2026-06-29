@@ -68,16 +68,126 @@ export const WorldClocks: React.FC = () => {
     }
   };
 
-  const getWeatherIcon = (condition: string, isNight: boolean) => {
+  const getWeatherIcon = (condition: string, isNight: boolean, iconColorClass: string) => {
     switch (condition.toLowerCase()) {
       case 'sunny':
       case 'clear':
-        return isNight ? <Moon className="w-5 h-5 text-indigo-300" /> : <Sun className="w-5 h-5 text-amber-400" />;
+        return isNight ? <Moon className={`w-4 h-4 ${iconColorClass}`} /> : <Sun className={`w-4 h-4 ${iconColorClass}`} />;
       case 'rainy':
-        return <CloudRain className="w-5 h-5 text-blue-400" />;
+        return <CloudRain className={`w-4 h-4 ${iconColorClass}`} />;
       default:
-        return <CloudSun className="w-5 h-5 text-slate-400" />;
+        return <CloudSun className={`w-4 h-4 ${iconColorClass}`} />;
     }
+  };
+
+  const getCityStyle = (cityName: string) => {
+    const name = cityName.toLowerCase();
+    if (name.includes('dhaka')) {
+      return {
+        cardBg: 'bg-gradient-to-br from-amber-50 to-yellow-100',
+        border: 'border-amber-300',
+        textCity: 'text-amber-900 font-extrabold',
+        textTime: 'text-amber-950 font-black',
+        textSec: 'text-amber-600 font-bold',
+        textSub: 'text-amber-800 font-medium',
+        glow: 'shadow-[0_0_15px_rgba(245,158,11,0.25)] hover:shadow-[0_0_25px_rgba(245,158,11,0.45)]',
+        iconColor: 'text-amber-600'
+      };
+    }
+    if (name.includes('makkah')) {
+      return {
+        cardBg: 'bg-gradient-to-br from-orange-50 to-amber-100',
+        border: 'border-orange-300/60',
+        textCity: 'text-orange-900 font-extrabold',
+        textTime: 'text-orange-950 font-black',
+        textSec: 'text-orange-600 font-bold',
+        textSub: 'text-orange-800 font-medium',
+        glow: 'shadow-[0_0_15px_rgba(249,115,22,0.25)] hover:shadow-[0_0_25px_rgba(249,115,22,0.45)]',
+        iconColor: 'text-orange-600'
+      };
+    }
+    if (name.includes('dubai')) {
+      return {
+        cardBg: 'bg-gradient-to-br from-yellow-50 to-orange-100',
+        border: 'border-orange-300/60',
+        textCity: 'text-amber-900 font-extrabold',
+        textTime: 'text-amber-950 font-black',
+        textSec: 'text-amber-600 font-bold',
+        textSub: 'text-amber-800 font-medium',
+        glow: 'shadow-[0_0_15px_rgba(217,119,6,0.25)] hover:shadow-[0_0_25px_rgba(217,119,6,0.45)]',
+        iconColor: 'text-amber-600'
+      };
+    }
+    if (name.includes('london')) {
+      return {
+        cardBg: 'bg-gradient-to-br from-red-50 to-rose-100',
+        border: 'border-rose-300/60',
+        textCity: 'text-rose-900 font-extrabold',
+        textTime: 'text-rose-950 font-black',
+        textSec: 'text-rose-600 font-bold',
+        textSub: 'text-rose-800 font-medium',
+        glow: 'shadow-[0_0_15px_rgba(244,63,94,0.25)] hover:shadow-[0_0_25px_rgba(244,63,94,0.45)]',
+        iconColor: 'text-rose-600'
+      };
+    }
+    if (name.includes('berlin')) {
+      return {
+        cardBg: 'bg-gradient-to-br from-orange-50 to-red-100',
+        border: 'border-orange-200',
+        textCity: 'text-orange-900 font-extrabold',
+        textTime: 'text-orange-950 font-black',
+        textSec: 'text-orange-600 font-bold',
+        textSub: 'text-orange-800 font-medium',
+        glow: 'shadow-[0_0_15px_rgba(234,88,12,0.25)] hover:shadow-[0_0_25px_rgba(234,88,12,0.45)]',
+        iconColor: 'text-orange-600'
+      };
+    }
+    if (name.includes('york')) {
+      return {
+        cardBg: 'bg-gradient-to-br from-rose-50 to-amber-100',
+        border: 'border-rose-200',
+        textCity: 'text-rose-950 font-extrabold',
+        textTime: 'text-rose-900 font-black',
+        textSec: 'text-rose-600 font-bold',
+        textSub: 'text-rose-800 font-medium',
+        glow: 'shadow-[0_0_15px_rgba(225,29,72,0.25)] hover:shadow-[0_0_25px_rgba(225,29,72,0.45)]',
+        iconColor: 'text-rose-600'
+      };
+    }
+    if (name.includes('tokyo')) {
+      return {
+        cardBg: 'bg-gradient-to-br from-pink-50 to-rose-100',
+        border: 'border-pink-300/60',
+        textCity: 'text-pink-900 font-extrabold',
+        textTime: 'text-pink-950 font-black',
+        textSec: 'text-pink-600 font-bold',
+        textSub: 'text-pink-800 font-medium',
+        glow: 'shadow-[0_0_15px_rgba(236,72,153,0.25)] hover:shadow-[0_0_25px_rgba(236,72,153,0.45)]',
+        iconColor: 'text-pink-600'
+      };
+    }
+    if (name.includes('beijing')) {
+      return {
+        cardBg: 'bg-gradient-to-br from-yellow-50 to-orange-100',
+        border: 'border-orange-400/60',
+        textCity: 'text-orange-950 font-extrabold',
+        textTime: 'text-amber-950 font-black',
+        textSec: 'text-orange-700 font-bold',
+        textSub: 'text-orange-900 font-medium',
+        glow: 'shadow-[0_0_15px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)]',
+        iconColor: 'text-orange-700'
+      };
+    }
+    return {
+      cardBg: 'bg-gradient-to-br from-amber-50 to-orange-50',
+      border: 'border-amber-200',
+      textCity: 'text-amber-900 font-extrabold',
+      textTime: 'text-amber-950 font-black',
+      textSec: 'text-amber-600 font-bold',
+      textSub: 'text-amber-800 font-medium',
+      glow: 'shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_20px_rgba(245,158,11,0.35)]',
+      iconColor: 'text-amber-600'
+    };
   };
 
   const getThemeGlow = () => {
@@ -106,37 +216,36 @@ export const WorldClocks: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-8 gap-3">
         {settings.cities.map((city) => {
           const { time, seconds, ampm, date, offset, isNight } = getLocalTimeParts(city.timezone);
+          const styles = getCityStyle(city.name);
 
           return (
             <div
               key={city.id}
-              className="glass-panel rounded-xl p-2.5 flex flex-col items-center justify-center text-center relative overflow-hidden group border border-white/10"
+              className={`rounded-xl p-2.5 flex flex-col items-center justify-center text-center relative overflow-hidden group border transition-all duration-300 ${styles.cardBg} ${styles.border} ${styles.glow}`}
               id={`world-clock-${city.name.toLowerCase()}`}
             >
-              {/* Day/Night subtle background blur glow */}
-              <div className={`absolute -bottom-6 -right-6 w-12 h-12 rounded-full filter blur-lg opacity-10 pointer-events-none transition-all duration-1000 ${
-                isNight ? 'bg-indigo-500' : 'bg-amber-500'
-              }`}></div>
+              {/* Subtle light/warm background glow */}
+              <div className="absolute -bottom-6 -right-6 w-12 h-12 rounded-full filter blur-lg opacity-25 pointer-events-none transition-all duration-1000 bg-amber-400/30"></div>
 
-              {/* Title & Flag using High Density .label style */}
-              <div className="label text-slate-300 text-[10px] font-bold tracking-wider flex items-center gap-1.5 justify-center mb-1 select-none">
+              {/* Title & Flag */}
+              <div className={`text-[10px] font-bold tracking-wider flex items-center gap-1.5 justify-center mb-1 select-none ${styles.textCity}`}>
                 <span className="text-xs">{city.flag}</span>
                 <span>{city.name}</span>
               </div>
 
               {/* Large Digital Clock Display */}
-              <div className="digital-font text-lg md:text-xl font-bold tracking-tight text-white leading-none my-1 select-none">
-                {time}<span className="text-slate-400 text-sm font-semibold">:{seconds}</span>
+              <div className={`digital-font text-lg md:text-xl font-bold tracking-tight leading-none my-1 select-none ${styles.textTime}`}>
+                {time}<span className={`text-xs font-semibold ${styles.textSec}`}>:{seconds}</span>
               </div>
 
               {/* Period & Timezone Offset */}
-              <div className="text-[9px] text-slate-500 font-mono uppercase tracking-wider">
-                <span className="text-slate-400 font-semibold">{ampm}</span> • {offset}
+              <div className={`text-[9px] font-mono uppercase tracking-wider ${styles.textSub}`}>
+                <span className="font-bold">{ampm}</span> • {offset}
               </div>
 
-              {/* Small high density operations weather stats */}
-              <div className="flex items-center gap-1.5 text-[8px] text-slate-400 font-mono mt-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                {getWeatherIcon(city.weatherCondition, isNight)}
+              {/* Weather Stats */}
+              <div className={`flex items-center gap-1.5 text-[8px] font-mono mt-1 ${styles.textSub}`}>
+                {getWeatherIcon(city.weatherCondition, isNight, styles.iconColor)}
                 <span>{city.tempOffset}°C</span>
               </div>
             </div>
