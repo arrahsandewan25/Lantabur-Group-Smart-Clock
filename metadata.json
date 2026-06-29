@@ -1,0 +1,6 @@
+{
+  "name": "Lantabur Group Smart World Dashboard",
+  "description": "An elite, animated digital operations center featuring live world clocks, smart prayer systems, weather tracking, announcements, holiday calendars, news tickers, and a live admin control panel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
