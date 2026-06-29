@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -86,7 +86,7 @@ Requirements:
     }
   });
 
-  // Live top news of Bangladesh & International (Google News RSS Feed)
+  // Live top news using Gemini API Search Grounding
   app.get("/api/news", async (req, res) => {
     const FALLBACK_NEWS = [
       "Politics: Bangladesh strengthens bilateral ties with international trade partners for smart infrastructure development.",
@@ -98,53 +98,55 @@ Requirements:
     ];
 
     try {
-      // 1. Check in-memory cache
       const now = Date.now();
-      if (cachedNews && (now - cachedNewsTime < NEWS_CACHE_DURATION)) {
+      // Cache news for 10 minutes to maintain performance and avoid API rate limits
+      if (cachedNews && (now - cachedNewsTime < 10 * 60 * 1000)) {
         return res.json({ news: cachedNews });
       }
 
-      const response = await fetch("https://news.google.com/rss");
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Google News RSS: ${response.statusText}`);
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey || apiKey === "MY_GEMINI_API_KEY") {
+        console.warn("Gemini API key is not configured for search grounded live news feed. Using fallback.");
+        return res.json({ news: FALLBACK_NEWS });
       }
 
-      const rssText = await response.text();
-      const items = rssText.match(/<item>([\s\S]*?)<\/item>/g) || [];
-      const news: string[] = [];
-
-      for (const item of items) {
-        const titleMatch = item.match(/<title>([\s\S]*?)<\/title>/);
-        if (titleMatch) {
-          let title = titleMatch[1];
-          // Strip CDATA wrapper if exists
-          if (title.startsWith("<![CDATA[")) {
-            title = title.substring(9, title.length - 3);
-          }
-          // Decode HTML entities
-          title = decodeHTMLEntities(title);
-          if (title) {
-            news.push(title);
+      const ai = new GoogleGenAI({
+        apiKey: apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
           }
         }
-        if (news.length >= 15) { // Get up to 15 latest items
-          break;
+      });
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: "Retrieve the absolute latest real-time news from today about Bangladesh, Saudi Arabia/UAE, and global technology or business. Generate 8-10 short, crisp, single-sentence live news updates (under 20 words each). Each update must start with a category followed by a colon, for example: 'Bangladesh: [Update]', 'Saudi Arabia: [Update]', 'Technology: [Update]', or 'Global: [Update]'. Make sure they represent real news events from the last 24 hours.",
+        config: {
+          tools: [{ googleSearch: {} }],
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.STRING
+            }
+          }
+        }
+      });
+
+      const text = response.text;
+      if (text) {
+        const newsArray = JSON.parse(text);
+        if (Array.isArray(newsArray) && newsArray.length > 0) {
+          cachedNews = newsArray;
+          cachedNewsTime = now;
+          return res.json({ news: cachedNews });
         }
       }
 
-      if (news.length > 0) {
-        cachedNews = news;
-        cachedNewsTime = now;
-        return res.json({ news: cachedNews });
-      }
-
-      if (cachedNews && cachedNews.length > 0) {
-        return res.json({ news: cachedNews });
-      }
-
-      return res.json({ news: FALLBACK_NEWS });
+      throw new Error("Invalid response format from Gemini search grounded news");
     } catch (error: any) {
-      console.warn("Soft warning: RSS News API request failed. Serving cached/fallback news content.", error);
+      console.warn("Soft warning: Gemini Search News API request failed. Serving cached/fallback news content.", error);
       if (cachedNews && cachedNews.length > 0) {
         return res.json({ news: cachedNews });
       }
