@@ -361,21 +361,28 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               Active Clock Nodes ({settings.cities.length})
             </span>
             <div className="space-y-2 max-h-[160px] overflow-y-auto">
-              {settings.cities.map((city) => (
-                <div key={city.id} className="flex items-center justify-between p-2 rounded bg-slate-900 border border-white/5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">{city.flag}</span>
-                    <span className="text-xs font-semibold text-slate-200">{city.name}</span>
-                    <span className="text-[9px] text-slate-500 font-mono">({city.timezone})</span>
+              {settings.cities.map((city) => {
+                const cleanCityName = city.name
+                  .replace(/^(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)\b\s*[,-]?\s*/gi, '')
+                  .replace(/\s*[,-]?\s*\b(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)$/gi, '')
+                  .replace(/,\s*(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)\b/gi, '')
+                  .trim();
+                return (
+                  <div key={city.id} className="flex items-center justify-between p-2 rounded bg-slate-900 border border-white/5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">{city.flag}</span>
+                      <span className="text-xs font-semibold text-slate-200">{cleanCityName}</span>
+                      <span className="text-[9px] text-slate-500 font-mono">({city.timezone})</span>
+                    </div>
+                    <button
+                      onClick={() => removeCity(city.id)}
+                      className="p-1 rounded text-red-400 hover:bg-red-400/10 transition-all"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => removeCity(city.id)}
-                    className="p-1 rounded text-red-400 hover:bg-red-400/10 transition-all"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

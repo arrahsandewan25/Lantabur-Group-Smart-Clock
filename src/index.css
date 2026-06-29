@@ -116,6 +116,10 @@
   box-shadow: 0 0 15px rgba(251, 191, 36, 0.45);
 }
 
+.glow-cyan {
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.65);
+}
+
 /* Digital Font Helper */
 .digital-font {
   font-family: 'Courier New', Courier, monospace;
@@ -164,7 +168,7 @@
   background: rgba(140, 192, 235, 0.8);
 }
 
-/* Text marquee scrolling animation for footer/announcements */
+/* Text marquee scrolling animation for footer/announcements (slower for premium readability) */
 @keyframes ticker {
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(-50%, 0, 0); }
@@ -178,7 +182,14 @@
 .ticker-content {
   display: inline-flex;
   white-space: nowrap;
-  animation: ticker 40s linear infinite;
+  animation: ticker 75s linear infinite;
+}
+
+/* Premium high-resolution wall display scaling (4K, 8K, 16K, 24K, 32K) */
+@media (min-width: 1921px) {
+  html {
+    font-size: 0.8333vw !important; /* Scale 1rem to be exactly proportional to viewport width (16px at 1920px) */
+  }
 }
 
 .ticker-content:hover {

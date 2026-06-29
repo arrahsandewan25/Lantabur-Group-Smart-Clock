@@ -10,6 +10,17 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+function decodeHTMLEntities(str: string): string {
+  return str
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .trim();
+}
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -75,7 +86,7 @@ Requirements:
     }
   });
 
-  // Live top news of Bangladesh & International
+  // Live top news of Bangladesh & International (Google News RSS Feed)
   app.get("/api/news", async (req, res) => {
     const FALLBACK_NEWS = [
       "Politics: Bangladesh strengthens bilateral ties with international trade partners for smart infrastructure development.",
@@ -93,79 +104,50 @@ Requirements:
         return res.json({ news: cachedNews });
       }
 
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey || apiKey === "MY_GEMINI_API_KEY") {
-        return res.json({ news: FALLBACK_NEWS });
+      const response = await fetch("https://news.google.com/rss");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Google News RSS: ${response.statusText}`);
       }
 
-      const ai = new GoogleGenAI({
-        apiKey: apiKey,
-        httpOptions: {
-          headers: {
-            'User-Agent': 'aistudio-build',
+      const rssText = await response.text();
+      const items = rssText.match(/<item>([\s\S]*?)<\/item>/g) || [];
+      const news: string[] = [];
+
+      for (const item of items) {
+        const titleMatch = item.match(/<title>([\s\S]*?)<\/title>/);
+        if (titleMatch) {
+          let title = titleMatch[1];
+          // Strip CDATA wrapper if exists
+          if (title.startsWith("<![CDATA[")) {
+            title = title.substring(9, title.length - 3);
+          }
+          // Decode HTML entities
+          title = decodeHTMLEntities(title);
+          if (title) {
+            news.push(title);
           }
         }
-      });
-
-      const prompt = `Search the web for the absolute latest, most recent (last 24 hours) Google top news stories.
-The stories MUST focus on:
-1. Bangladesh National & International Politics (latest policy, bilateral relations)
-2. Garments & Apparel Industry (textiles, exports, factories)
-3. Global and Bangladesh Economics
-4. Top Tech Giants (Apple, Google, Microsoft, OpenAI, Nvidia, etc.)
-5. Other most important global breaking news.
-
-Provide exactly 6 stories in total, covering these areas.
-Each news story must be brief, crisp, highly informative, factual, and formatted as: "[Category]: [Actual real news headline with specific details]" (e.g., "Garments: Bangladesh apparel exports surge by 8% in fiscal quarter" or "Tech Giants: OpenAI launches new advanced model for agentic workflows").
-Format the output EXACTLY as a JSON array of strings, with no other text, markdown blocks, or commentary. For example:
-[
-  "Politics: ...",
-  "Garments: ...",
-  "Economics: ...",
-  "Tech Giants: ..."
-]`;
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: prompt,
-        config: {
-          tools: [{ googleSearch: {} }]
+        if (news.length >= 15) { // Get up to 15 latest items
+          break;
         }
-      });
-
-      let text = response.text || "[]";
-      // Clean up markdown block if present
-      if (text.includes("```")) {
-        text = text.replace(/```json/g, "").replace(/```/g, "").trim();
       }
 
-      try {
-        const news = JSON.parse(text);
-        if (Array.isArray(news) && news.length > 0) {
-          cachedNews = news;
-          cachedNewsTime = now;
-          return res.json({ news });
-        }
-      } catch (parseError) {
-        console.warn("Soft warning: Failed to parse Gemini news response, using fallback:", text);
+      if (news.length > 0) {
+        cachedNews = news;
+        cachedNewsTime = now;
+        return res.json({ news: cachedNews });
       }
 
-      // If we parsed incorrectly but have an older cache, use it
       if (cachedNews && cachedNews.length > 0) {
         return res.json({ news: cachedNews });
       }
 
       return res.json({ news: FALLBACK_NEWS });
-
     } catch (error: any) {
-      // Use standard warning log for expected quota/429 limits to avoid triggering fatal app errors in testing
-      console.warn("Soft warning: News API request skipped or rate-limited. Serving cached/fallback news content.");
-      
-      // Serve stale cache if available
+      console.warn("Soft warning: RSS News API request failed. Serving cached/fallback news content.", error);
       if (cachedNews && cachedNews.length > 0) {
         return res.json({ news: cachedNews });
       }
-      
       return res.json({ news: FALLBACK_NEWS });
     }
   });

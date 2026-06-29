@@ -7,8 +7,8 @@ export const NewsTicker: React.FC = () => {
 
   if (!settings.widgetVisibility.newsTicker || settings.newsSources.length === 0) return null;
 
-  // Duplicate the news list to create a seamless infinite scroll loop
-  const duplicatedNews = [...settings.newsSources, ...settings.newsSources, ...settings.newsSources];
+  // Duplicate the news list exactly twice to create a mathematically perfect seamless infinite scroll loop at -50%
+  const duplicatedNews = [...settings.newsSources, ...settings.newsSources];
 
   return (
     <div

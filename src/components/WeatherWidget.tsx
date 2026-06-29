@@ -1,36 +1,91 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useDashboard } from '../context/DashboardContext';
-import { CloudSun, Thermometer, Droplets, Wind, CloudRain, Sun, Compass } from 'lucide-react';
+import { CloudSun, Thermometer, Droplets, Wind, CloudRain, Sun, Moon } from 'lucide-react';
 
 export const WeatherWidget: React.FC = () => {
-  const { settings } = useDashboard();
-  const [weatherData, setWeatherData] = useState({
-    temp: 31,
-    feelsLike: 35,
-    humidity: 72,
-    wind: 12,
-    rainChance: 15,
-    uvIndex: 8, // Very High
-    sunrise: '05:46 AM',
-    sunset: '06:47 PM'
-  });
-
-  // Simulate periodic refreshing (e.g., standard interval mimicking an API refresh)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Add minor fluctuations to make the telemetry feel alive and live
-      setWeatherData((prev) => ({
-        ...prev,
-        temp: Math.min(36, Math.max(28, prev.temp + (Math.random() > 0.5 ? 0.2 : -0.2))),
-        feelsLike: Math.min(41, Math.max(30, prev.feelsLike + (Math.random() > 0.5 ? 0.3 : -0.3))),
-        humidity: Math.min(90, Math.max(50, prev.humidity + Math.floor(Math.random() * 3 - 1))),
-        wind: Math.min(20, Math.max(5, prev.wind + Math.floor(Math.random() * 2 - 1))),
-      }));
-    }, 15000); // Live fluctuation every 15 seconds for UI interest
-    return () => clearInterval(interval);
-  }, []);
+  const { settings, currentTime } = useDashboard();
 
   if (!settings.widgetVisibility.weather) return null;
+
+  // Find Dhaka's configuration from the active cities
+  const dhakaCity = settings.cities.find(
+    (c) => c.timezone === 'Asia/Dhaka' || c.name.toLowerCase().includes('dhaka')
+  );
+
+  // Determine current hour in Dhaka to simulate physical diurnal conditions
+  const getDhakaHour = (): number => {
+    try {
+      return parseInt(
+        new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Dhaka',
+          hour: 'numeric',
+          hour12: false,
+        }).format(currentTime),
+        10
+      );
+    } catch {
+      // Fallback if IANA formatting fails
+      return new Date(currentTime.getTime() + 6 * 60 * 60 * 1000).getUTCHours();
+    }
+  };
+
+  const dhakaHour = getDhakaHour();
+  const isNight = dhakaHour < 6 || dhakaHour >= 19; // Night between 7 PM and 6 AM
+
+  // 1. Dynamic Temperature Curve (maximum in late afternoon, minimum in early morning)
+  const baseOffset = dhakaCity?.tempOffset ?? 31.0;
+  const timeRad = ((dhakaHour - 15) * Math.PI) / 12; // Shifted so max is at 15:00 (3 PM)
+  const diurnalOffset = Math.cos(timeRad) * 4.0; // +/- 4°C fluctuation over 24 hours
+  // Tiny live telemetry jitter using seconds to make the UI feel alive
+  const jitter = Math.sin((currentTime.getSeconds() * Math.PI) / 30) * 0.2;
+  const temp = parseFloat((baseOffset + diurnalOffset + jitter).toFixed(1));
+
+  // 2. Dynamic Humidity (higher at night/morning, lower in hot afternoons)
+  const humidityRad = ((dhakaHour - 5) * Math.PI) / 12; // Peak humidity at 5 AM
+  const baseHumidity = 72;
+  const humidityOffset = Math.cos(humidityRad) * 12; // +/- 12% fluctuation
+  const humidityJitter = Math.cos((currentTime.getSeconds() * Math.PI) / 30) * 1.5;
+  const humidity = Math.min(98, Math.max(30, Math.round(baseHumidity + humidityOffset + humidityJitter)));
+
+  // 3. Dynamic Wind speed (peaks slightly in afternoon, calmer at night)
+  const windRad = ((dhakaHour - 14) * Math.PI) / 12;
+  const baseWind = 12;
+  const windOffset = Math.cos(windRad) * 4;
+  const windJitter = Math.sin((currentTime.getSeconds() * Math.PI) / 15) * 1.0;
+  const wind = Math.min(25, Math.max(3, Math.round(baseWind + windOffset + windJitter)));
+
+  // 4. Dynamic Precipitation based on configured weather condition
+  const configCondition = (dhakaCity?.weatherCondition || 'Sunny').toLowerCase();
+  let baseRainChance = 15;
+  if (configCondition === 'rainy') baseRainChance = 85;
+  else if (configCondition === 'cloudy') baseRainChance = 40;
+  else if (configCondition === 'hazy') baseRainChance = 10;
+  else baseRainChance = 5;
+
+  const rainJitter = Math.sin((currentTime.getSeconds() * Math.PI) / 45) * 2;
+  const rainChance = Math.min(100, Math.max(0, Math.round(baseRainChance + rainJitter)));
+
+  // 5. Dynamic UV Index (0 at night, peaks in midday sun)
+  let uvIndex = 0;
+  if (dhakaHour >= 6 && dhakaHour < 18) {
+    const uvFactor = Math.sin(((dhakaHour - 6) * Math.PI) / 12); // Peaks at 12 PM
+    uvIndex = Math.round(uvFactor * 9);
+  }
+
+  // 6. Dynamic Feels Like
+  const feelsLike = parseFloat((temp + (humidity > 60 ? (humidity - 60) * 0.12 : 0)).toFixed(1));
+
+  // 7. Dynamic Weather Condition Title
+  let displayCondition = 'Sunny & Clear';
+  if (configCondition === 'rainy') {
+    displayCondition = isNight ? 'Rainy Night' : 'Rainy & Wet';
+  } else if (configCondition === 'cloudy') {
+    displayCondition = isNight ? 'Cloudy Night' : 'Mostly Cloudy';
+  } else if (configCondition === 'hazy') {
+    displayCondition = isNight ? 'Hazy Night' : 'Hazy Mist';
+  } else {
+    displayCondition = isNight ? 'Clear Night' : 'Sunny & Clear';
+  }
 
   const getUVRating = (uv: number) => {
     if (uv <= 2) return { text: 'Low', color: 'text-emerald-400 border-emerald-400/20' };
@@ -39,7 +94,22 @@ export const WeatherWidget: React.FC = () => {
     return { text: 'Very High', color: 'text-rose-400 border-rose-400/20' };
   };
 
-  const uvRating = getUVRating(weatherData.uvIndex);
+  const uvRating = getUVRating(uvIndex);
+
+  // Dynamic Icon selector
+  const getWeatherIcon = () => {
+    const iconClass = "w-14 h-14 animate-pulse duration-[3000ms] relative z-10";
+    if (configCondition === 'rainy') {
+      return <CloudRain className={`${iconClass} text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.4)]`} />;
+    }
+    if (configCondition === 'cloudy') {
+      return <CloudSun className={`${iconClass} text-slate-300 drop-shadow-[0_0_12px_rgba(203,213,225,0.4)]`} />;
+    }
+    if (isNight) {
+      return <Moon className={`${iconClass} text-indigo-300 drop-shadow-[0_0_12px_rgba(165,180,252,0.4)]`} />;
+    }
+    return <Sun className={`${iconClass} text-yellow-400 animate-spin-slow drop-shadow-[0_0_12px_rgba(234,179,8,0.4)]`} />;
+  };
 
   return (
     <div className="glass-panel rounded-2xl p-5 border border-white/5 flex flex-col justify-between h-full relative overflow-hidden" id="weather-widget">
@@ -64,22 +134,24 @@ export const WeatherWidget: React.FC = () => {
       <div className="grid grid-cols-2 gap-4 my-4 items-center">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="absolute inset-0 bg-yellow-400/10 rounded-full blur-md"></div>
-            <Sun className="w-14 h-14 text-yellow-400 animate-spin-slow drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]" />
+            <div className="absolute inset-0 bg-cyan-500/5 rounded-full blur-md"></div>
+            {getWeatherIcon()}
           </div>
           <div>
             <div className="font-mono text-4xl font-extrabold text-white leading-none tracking-tighter flex">
-              {weatherData.temp.toFixed(1)}
+              {temp.toFixed(1)}
               <span className="text-cyan-400 text-2xl font-semibold">°C</span>
             </div>
-            <span className="text-[10px] text-slate-400 font-mono mt-1 block">Sunny & Clear</span>
+            <span className="text-[10px] text-slate-400 font-mono mt-1 block font-medium">{displayCondition}</span>
           </div>
         </div>
 
         <div className="flex flex-col items-end text-right">
           <span className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">Feels Like</span>
-          <span className="text-lg font-mono font-semibold text-white">{weatherData.feelsLike.toFixed(1)}°C</span>
-          <span className="text-[9px] text-slate-400 font-mono">Heat Index: Stable</span>
+          <span className="text-lg font-mono font-semibold text-white">{feelsLike.toFixed(1)}°C</span>
+          <span className="text-[9px] text-slate-400 font-mono">
+            {isNight ? 'Sun Status: Below Horizon' : 'Sun Status: Stable'}
+          </span>
         </div>
       </div>
 
@@ -89,7 +161,7 @@ export const WeatherWidget: React.FC = () => {
           <Droplets className="w-4 h-4 text-blue-400 shrink-0" />
           <div>
             <span className="text-[9px] text-slate-500 font-mono block uppercase">Humidity</span>
-            <span className="font-mono text-xs font-bold text-white">{weatherData.humidity}%</span>
+            <span className="font-mono text-xs font-bold text-white">{humidity}%</span>
           </div>
         </div>
 
@@ -97,7 +169,7 @@ export const WeatherWidget: React.FC = () => {
           <Wind className="w-4 h-4 text-slate-400 shrink-0" />
           <div>
             <span className="text-[9px] text-slate-500 font-mono block uppercase">Wind</span>
-            <span className="font-mono text-xs font-bold text-white">{weatherData.wind} km/h</span>
+            <span className="font-mono text-xs font-bold text-white">{wind} km/h</span>
           </div>
         </div>
 
@@ -105,7 +177,7 @@ export const WeatherWidget: React.FC = () => {
           <CloudRain className="w-4 h-4 text-cyan-400 shrink-0" />
           <div>
             <span className="text-[9px] text-slate-500 font-mono block uppercase">Precipitation</span>
-            <span className="font-mono text-xs font-bold text-white">{weatherData.rainChance}%</span>
+            <span className="font-mono text-xs font-bold text-white">{rainChance}%</span>
           </div>
         </div>
 
@@ -114,7 +186,7 @@ export const WeatherWidget: React.FC = () => {
           <div>
             <span className="text-[9px] text-slate-500 font-mono block uppercase">UV Index</span>
             <span className={`font-mono text-xs font-black ${uvRating.color}`}>
-              {weatherData.uvIndex} ({uvRating.text})
+              {uvIndex} ({uvRating.text})
             </span>
           </div>
         </div>
@@ -122,8 +194,8 @@ export const WeatherWidget: React.FC = () => {
 
       {/* Solar Transitions */}
       <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono pt-2">
-        <span>🌅 Sunrise: <span className="text-slate-300 font-semibold">{weatherData.sunrise}</span></span>
-        <span>🌇 Sunset: <span className="text-slate-300 font-semibold">{weatherData.sunset}</span></span>
+        <span>🌅 Sunrise: <span className="text-slate-300 font-semibold">05:46 AM</span></span>
+        <span>🌇 Sunset: <span className="text-slate-300 font-semibold">06:47 PM</span></span>
       </div>
     </div>
   );

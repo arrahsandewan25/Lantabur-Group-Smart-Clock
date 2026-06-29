@@ -28,12 +28,12 @@ interface DashboardContextType {
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 const DEFAULT_CITIES: CityClockConfig[] = [
-  { id: '1', name: 'Dhaka', flag: '🇧🇩', timezone: 'Asia/Dhaka', tempOffset: 31, weatherCondition: 'Sunny' },
   { id: '2', name: 'Makkah', flag: '🇸🇦', timezone: 'Asia/Riyadh', tempOffset: 38, weatherCondition: 'Clear' },
   { id: '3', name: 'Dubai', flag: '🇦🇪', timezone: 'Asia/Dubai', tempOffset: 35, weatherCondition: 'Hazy' },
   { id: '4', name: 'London', flag: '🇬🇧', timezone: 'Europe/London', tempOffset: 19, weatherCondition: 'Rainy' },
   { id: '5', name: 'Berlin', flag: '🇩🇪', timezone: 'Europe/Berlin', tempOffset: 22, weatherCondition: 'Cloudy' },
-  { id: '6', name: 'New York', flag: '🇺🇸', timezone: 'America/New_York', tempOffset: 26, weatherCondition: 'Partly Cloudy' }
+  { id: '6', name: 'New York', flag: '🇺🇸', timezone: 'America/New_York', tempOffset: 26, weatherCondition: 'Partly Cloudy' },
+  { id: '1', name: 'Dhaka', flag: '🇧🇩', timezone: 'Asia/Dhaka', tempOffset: 31, weatherCondition: 'Sunny' }
 ];
 
 const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
@@ -105,7 +105,26 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             city.name !== 'Beijing' && 
             city.timezone !== 'Asia/Tokyo' && 
             city.timezone !== 'Asia/Shanghai'
-          );
+          ).map((city: any) => ({
+            ...city,
+            name: city.name
+              .replace(/^(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)\b\s*[,-]?\s*/gi, '')
+              .replace(/\s*[,-]?\s*\b(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)$/gi, '')
+              .replace(/,\s*(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)\b/gi, '')
+              .trim()
+          }));
+          // Sort cities to match order: Makkah, Dubai, London, Berlin, New York, Dhaka
+          const order = ['makkah', 'dubai', 'london', 'berlin', 'new york', 'dhaka'];
+          parsed.cities.sort((a: any, b: any) => {
+            const indexA = order.indexOf(a.name.toLowerCase());
+            const indexB = order.indexOf(b.name.toLowerCase());
+            if (indexA !== -1 && indexB !== -1) {
+              return indexA - indexB;
+            }
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+            return 0;
+          });
         }
         return parsed;
       }
@@ -275,8 +294,15 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const addCity = (item: Omit<CityClockConfig, 'id'>) => {
+    const cleanedName = item.name
+      .replace(/^(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)\b\s*[,-]?\s*/gi, '')
+      .replace(/\s*[,-]?\s*\b(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)$/gi, '')
+      .replace(/,\s*(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)\b/gi, '')
+      .trim();
+
     const newItem: CityClockConfig = {
       ...item,
+      name: cleanedName,
       id: Math.random().toString(36).substr(2, 9)
     };
     setSettings((prev) => ({

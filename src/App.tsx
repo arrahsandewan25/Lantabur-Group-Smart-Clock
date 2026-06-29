@@ -15,14 +15,14 @@ const DashboardContent: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen flex flex-col justify-between relative text-slate-100 transition-all duration-300"
+      className="min-h-screen flex flex-col justify-between relative text-slate-100 transition-all duration-300 w-full pt-4 px-4 sm:pt-6 sm:px-6 lg:pt-8 lg:px-8 pb-0 gap-4 md:gap-6"
       style={{ filter: `brightness(${settings.brightness}%)` }}
     >
       {/* Animated galaxy background and particle system */}
       <Backdrop />
 
       {/* Main dashboard body */}
-      <main className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow flex flex-col gap-4">
+      <main className="w-full max-w-full mx-auto flex-grow flex flex-col gap-4 md:gap-6">
         
         {/* Row 1: Corporate Header */}
         <Header />
@@ -31,7 +31,7 @@ const DashboardContent: React.FC = () => {
         <WorldClocks />
 
         {/* Row 3: Main Operations Bento Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-grow">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 flex-grow">
           
           {/* Left Column: Environmental Station (6 cols) */}
           <div className="lg:col-span-6 flex flex-col">

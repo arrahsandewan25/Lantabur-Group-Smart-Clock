@@ -193,6 +193,35 @@ export const WorldClocks: React.FC = () => {
         {settings.cities.map((city, index) => {
           const { time, seconds, ampm, date, offset, isNight } = getLocalTimeParts(city.timezone);
           const styles = getCityTheme(city.name);
+          const cleanName = city.name
+            .replace(/^(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)\b\s*[,-]?\s*/gi, '')
+            .replace(/\s*[,-]?\s*\b(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)$/gi, '')
+            .replace(/,\s*(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)\b/gi, '')
+            .trim();
+
+          // Get clean GMT offset
+          const matchOffset = offset.match(/(GMT|UTC)([+-]\d+(:\d+)?)?/i);
+          const cleanOffset = matchOffset ? matchOffset[0].toUpperCase() : offset;
+
+          // Extract country code from original name or timezone
+          const getCountryCode = (name: string, tz: string): string => {
+            const match = name.match(/^(BD|SA|AE|GB|DE|US|UK|FR|CA|AU|JP|CN)\b/i) || 
+                          name.match(/,\s*([A-Z]{2})\b/i) || 
+                          name.match(/\b([A-Z]{2})$/i);
+            if (match) return match[1].toUpperCase();
+            
+            const tzLower = tz.toLowerCase();
+            const nLower = name.toLowerCase();
+            if (tzLower.includes('riyadh') || nLower.includes('makkah')) return 'SA';
+            if (tzLower.includes('dubai') || nLower.includes('dubai')) return 'AE';
+            if (tzLower.includes('london') || nLower.includes('london')) return 'GB';
+            if (tzLower.includes('berlin') || nLower.includes('berlin')) return 'DE';
+            if (tzLower.includes('new_york') || nLower.includes('new york')) return 'US';
+            if (tzLower.includes('dhaka') || nLower.includes('dhaka')) return 'BD';
+            return '';
+          };
+
+          const countryCode = getCountryCode(city.name, city.timezone);
 
           return (
             <div
@@ -212,7 +241,7 @@ export const WorldClocks: React.FC = () => {
               {/* Title & Flag */}
               <div className={`flex items-center gap-2.5 justify-center mb-2.5 select-none ${styles.textCity} relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]`}>
                 <span className="text-xl md:text-2xl">{city.flag}</span>
-                <span className="font-extrabold tracking-widest text-sm md:text-base uppercase">{city.name}</span>
+                <span className="font-extrabold tracking-widest text-sm md:text-base uppercase">{cleanName}</span>
               </div>
 
               {/* Large Digital Clock Display */}
@@ -222,7 +251,7 @@ export const WorldClocks: React.FC = () => {
 
               {/* Period & Timezone Offset */}
               <div className={`font-mono uppercase tracking-wider ${styles.textSub} mb-2.5 text-xs relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]`}>
-                <span className="font-extrabold">{ampm}</span> • {offset} • <span className="text-[10px]">{date}</span>
+                <span className="font-extrabold">{ampm}</span> • {cleanOffset}{countryCode ? ` ${countryCode}` : ''} • <span className="text-[10px]">{date}</span>
               </div>
 
               {/* Weather Stats */}
