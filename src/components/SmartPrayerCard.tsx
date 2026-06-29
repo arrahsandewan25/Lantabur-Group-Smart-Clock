@@ -114,41 +114,42 @@ export const SmartPrayerCard: React.FC = () => {
     >
       {/* High-Resolution Al-Masjid an-Nabawi Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out pointer-events-none scale-105"
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out pointer-events-none scale-100 opacity-90"
         style={{ backgroundImage: `url('/Prayer.jpg')` }}
       />
       
-      {/* Elegant dark semi-transparent glassmorphism gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/60 to-slate-950/50 pointer-events-none" />
+      {/* High-contrast smart gradient overlay: clear in the middle, dark at the top and bottom for flawless typography readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/35 to-black/90 pointer-events-none" />
+      <div className="absolute inset-0 bg-slate-950/15 pointer-events-none" />
 
       {/* Background soft glow based on prayer status */}
-      <div className="absolute -inset-24 rounded-full filter blur-3xl opacity-10 pointer-events-none bg-current"></div>
+      <div className="absolute -inset-24 rounded-full filter blur-3xl opacity-15 pointer-events-none bg-current"></div>
 
       {/* Header with status badges and mute toggler */}
-      <div className="flex items-center justify-between relative z-10 border-b border-white/10 pb-2.5">
+      <div className="flex items-center justify-between relative z-10 border-b border-white/20 pb-2.5">
         <div className="flex items-center gap-2">
-          <span className="text-[9px] font-mono uppercase tracking-widest font-black bg-emerald-950/50 border border-emerald-500/40 px-2 py-0.5 rounded text-emerald-300 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
+          <span className="text-[10px] font-mono uppercase tracking-widest font-black bg-black/75 border border-white/30 px-2 py-0.5 rounded text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] animate-pulse">
             {type === 'CURRENT' ? 'CURRENT PRAYER' : 'NEXT PRAYER'}
           </span>
-          <span className="text-[9px] text-amber-200/90 font-mono font-medium drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
+          <span className="text-[10px] text-white font-mono font-black bg-black/50 px-2 py-0.5 rounded border border-white/10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
             {settings.prayerMethod} • {settings.prayerMadhhab === 'Hanafi' ? 'Hanafi' : 'Standard'}
           </span>
         </div>
 
         <button
           onClick={() => setIsAdhanMuted(!isAdhanMuted)}
-          className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-white/10 bg-white/5 hover:border-white/20 transition-all text-slate-300 hover:text-white"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-white/30 bg-black/50 hover:bg-black/70 hover:border-white/50 transition-all text-white font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]"
           title={isAdhanMuted ? "Enable chime" : "Mute chime"}
         >
           {isAdhanMuted ? (
             <>
               <BellOff className="w-3.5 h-3.5 text-rose-400" />
-              <span className="text-[8px] font-mono uppercase font-black text-rose-400">Muted</span>
+              <span className="text-[9px] font-mono uppercase font-black text-white">Muted</span>
             </>
           ) : (
             <>
               <Bell className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-              <span className="text-[8px] font-mono uppercase font-black text-emerald-400">Active</span>
+              <span className="text-[9px] font-mono uppercase font-black text-white">Active</span>
             </>
           )}
         </button>
@@ -159,19 +160,23 @@ export const SmartPrayerCard: React.FC = () => {
         
         {/* Left Side: Detail metadata */}
         <div className="flex flex-col items-center sm:items-start lg:items-center xl:items-start text-center sm:text-left lg:text-center xl:text-left">
-          <div className="label text-amber-200 font-semibold mb-1 drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">Operational Node</div>
-          <div className="flex items-center gap-2 bg-slate-900/60 border border-emerald-500/30 px-3 py-1 rounded-lg backdrop-blur-md shadow-lg">
+          <div className="label text-white font-extrabold text-xs mb-1.5 uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">Operational Node</div>
+          <div className="flex items-center gap-2 bg-slate-900/85 border border-white/30 px-3.5 py-1.5 rounded-lg backdrop-blur-md shadow-xl">
             {getPrayerIcon(prayer)}
             <div>
-              <h3 className="font-mono text-xl font-black text-white uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+              <h3 className="font-mono text-2xl font-black text-white uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
                 {prayer}
               </h3>
-              <span className="text-[8px] font-mono text-emerald-300 font-bold uppercase block drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]">Active Interval</span>
+              <span className="text-[9px] font-mono text-white font-black uppercase block drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]">Active Interval</span>
             </div>
           </div>
-          <div className="mt-2.5 space-y-0.5 text-[10px] text-amber-100/90 font-mono drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">
-            <div>🌅 Started: <span className="text-white font-extrabold">{formatTimeHM(startTime)}</span></div>
-            <div>🌇 Target: <span className="text-white font-extrabold">{formatTimeHM(endTime)}</span></div>
+          <div className="mt-3.5 space-y-1 text-xs text-white font-mono drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+            <div className="bg-black/50 px-2 py-1 rounded border border-white/10 flex items-center gap-1">
+              <span>🌅 Started:</span> <span className="text-white font-black">{formatTimeHM(startTime)}</span>
+            </div>
+            <div className="bg-black/50 px-2 py-1 rounded border border-white/10 flex items-center gap-1">
+              <span>🌇 Target:</span> <span className="text-white font-black">{formatTimeHM(endTime)}</span>
+            </div>
           </div>
         </div>
 
@@ -183,7 +188,7 @@ export const SmartPrayerCard: React.FC = () => {
               cx="80"
               cy="80"
               r={radius + 8}
-              className="text-white/10"
+              className="text-white/20"
               strokeWidth="7"
               stroke="currentColor"
               fill="transparent"
@@ -209,47 +214,47 @@ export const SmartPrayerCard: React.FC = () => {
 
           {/* Core display inside ring */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[10px] text-emerald-300 font-mono tracking-widest uppercase font-extrabold drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">
+            <span className="text-[10px] text-white font-mono tracking-widest uppercase font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] bg-black/40 px-1 rounded">
               {type === 'CURRENT' ? 'REMAINING' : 'STARTS IN'}
             </span>
-            <span className="digital-font text-base md:text-lg text-white font-bold tracking-tight my-0.5 select-none drop-shadow-[0_2.5px_5px_rgba(0,0,0,0.95)]">
+            <span className="digital-font text-3xl md:text-4xl font-black text-white tracking-widest my-1 select-none drop-shadow-[0_3px_8px_rgba(0,0,0,0.99)]">
               {formatDuration(timeRemainingMs)}
             </span>
-            <span className="text-[10px] text-amber-200 font-mono font-extrabold drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">
-              {Math.round(progress)}% COMPLETED
+            <span className="text-[10px] text-white font-mono font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] bg-black/60 px-2 py-0.5 rounded border border-white/10">
+              {Math.round(progress)}% DONE
             </span>
           </div>
         </div>
 
         {/* Right Side: Progress Bar details */}
         <div className="flex flex-col items-center sm:items-end lg:items-center xl:items-end text-center sm:text-right lg:text-center xl:text-right w-full sm:w-auto lg:w-full xl:w-auto">
-          <span className="label text-amber-200 font-semibold mb-1 drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">State Progress</span>
-          <div className="w-44 bg-black/50 rounded-full h-1.5 overflow-hidden border border-white/20 mb-2">
+          <span className="label text-white font-extrabold text-xs mb-1.5 uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">State Progress</span>
+          <div className="w-44 bg-black/70 rounded-full h-2 overflow-hidden border border-white/30 mb-2.5 shadow-inner">
             <div
               className={`h-full rounded-full transition-all duration-1000 ${
-                prayer === 'Asr' || prayer === 'Fajr' ? 'bg-amber-500' :
-                prayer === 'Maghrib' ? 'bg-rose-500' :
-                prayer === 'Isha' || prayer === 'Tahajjud' ? 'bg-blue-500' : 'bg-emerald-500'
+                prayer === 'Asr' || prayer === 'Fajr' ? 'bg-amber-400' :
+                prayer === 'Maghrib' ? 'bg-rose-400' :
+                prayer === 'Isha' || prayer === 'Tahajjud' ? 'bg-blue-400' : 'bg-emerald-400'
               }`}
               style={{ width: `${progress}%` }}
             ></div>
           </div>
-          <div className="text-[10px] text-amber-100/90 font-mono leading-relaxed drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">
-            <div>Next Event: <span className="text-amber-300 font-extrabold">{prayer === 'Isha' ? 'Tahajjud' : prayer === 'Tahajjud' ? 'Fajr' : prayer === 'Fajr' ? 'Dhuhr' : prayer === 'Dhuhr' ? 'Asr' : prayer === 'Asr' ? 'Maghrib' : 'Isha'}</span></div>
-            <div className="text-[8px] text-emerald-400 uppercase tracking-widest font-black mt-0.5">Calculations live</div>
+          <div className="text-xs text-white font-mono leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] space-y-1">
+            <div className="bg-black/50 px-2 py-1 rounded border border-white/10">Next Event: <span className="text-white font-black bg-black/40 px-1 rounded">{prayer === 'Isha' ? 'Tahajjud' : prayer === 'Tahajjud' ? 'Fajr' : prayer === 'Fajr' ? 'Dhuhr' : prayer === 'Dhuhr' ? 'Asr' : prayer === 'Asr' ? 'Maghrib' : 'Isha'}</span></div>
+            <div className="text-[9px] text-white uppercase tracking-widest font-black mt-1 bg-emerald-600 border border-emerald-400 px-2 py-1 rounded inline-block shadow-lg">Calculations live</div>
           </div>
         </div>
 
       </div>
 
       {/* Interactive Testing Control Panel inside card */}
-      <div className="mt-2 border-t border-white/5 pt-2 flex items-center justify-between relative z-10 text-[9px] text-slate-500 font-mono">
-        <span>Continuous Automatic Sequence State: Running</span>
+      <div className="mt-2 border-t border-white/20 pt-2 flex items-center justify-between relative z-10 text-[10px] text-white font-mono font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+        <span className="bg-black/50 px-2 py-1 rounded border border-white/10">Continuous Automatic Sequence State: Running</span>
         <button
           onClick={playNotificationChime}
-          className="flex items-center gap-1 hover:text-white px-2 py-0.5 rounded border border-white/5 hover:border-white/15 bg-white/5 transition-all"
+          className="flex items-center gap-1.5 text-white hover:bg-white/20 px-2.5 py-1 rounded border border-white/30 bg-black/50 backdrop-blur-sm transition-all font-black uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]"
         >
-          <Volume2 className="w-3.5 h-3.5" />
+          <Volume2 className="w-3.5 h-3.5 text-white" />
           Test Operational Chime
         </button>
       </div>
