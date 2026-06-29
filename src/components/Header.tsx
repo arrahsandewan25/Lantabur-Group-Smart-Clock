@@ -56,17 +56,6 @@ export const Header: React.FC = () => {
 
       {/* Brand & Slogan */}
       <div className="flex items-center gap-4 self-start md:self-auto">
-        <div className="relative">
-          <div className="absolute inset-0 bg-blue-500/20 blur-lg rounded-full animate-pulse"></div>
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#8CC0EB] via-[#BFDDF0] to-[#FFEBCC] border border-white/30 flex items-center justify-center relative overflow-hidden">
-            {settings.logoUrl ? (
-              <img src={settings.logoUrl} alt="Lantabur" className="w-10 h-10 object-contain" referrerPolicy="no-referrer" />
-            ) : (
-              <Cpu className={`w-7 h-7 ${getThemeColorGlow()}`} />
-            )}
-          </div>
-        </div>
-
         <div>
           <h1 className="font-display font-bold text-xl md:text-2xl text-white tracking-wide uppercase flex items-center gap-2">
             {settings.logoUrl && (

@@ -30,9 +30,7 @@ const DEFAULT_CITIES: CityClockConfig[] = [
   { id: '3', name: 'Dubai', flag: '🇦🇪', timezone: 'Asia/Dubai', tempOffset: 35, weatherCondition: 'Hazy' },
   { id: '4', name: 'London', flag: '🇬🇧', timezone: 'Europe/London', tempOffset: 19, weatherCondition: 'Rainy' },
   { id: '5', name: 'Berlin', flag: '🇩🇪', timezone: 'Europe/Berlin', tempOffset: 22, weatherCondition: 'Cloudy' },
-  { id: '6', name: 'New York', flag: '🇺🇸', timezone: 'America/New_York', tempOffset: 26, weatherCondition: 'Partly Cloudy' },
-  { id: '7', name: 'Tokyo', flag: '🇯🇵', timezone: 'Asia/Tokyo', tempOffset: 24, weatherCondition: 'Sunny' },
-  { id: '8', name: 'Beijing', flag: '🇨🇳', timezone: 'Asia/Shanghai', tempOffset: 28, weatherCondition: 'Sunny' }
+  { id: '6', name: 'New York', flag: '🇺🇸', timezone: 'America/New_York', tempOffset: 26, weatherCondition: 'Partly Cloudy' }
 ];
 
 const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
@@ -99,12 +97,12 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           parsed.logoUrl = defaultLogo;
         }
         if (parsed.cities && Array.isArray(parsed.cities)) {
-          parsed.cities = parsed.cities.map((city: any) => {
-            if (city.timezone === 'Asia/Singapore' || city.name === 'Singapore') {
-              return { id: city.id || '8', name: 'Beijing', flag: '🇨🇳', timezone: 'Asia/Shanghai', tempOffset: 28, weatherCondition: 'Sunny' };
-            }
-            return city;
-          });
+          parsed.cities = parsed.cities.filter((city: any) => 
+            city.name !== 'Tokyo' && 
+            city.name !== 'Beijing' && 
+            city.timezone !== 'Asia/Tokyo' && 
+            city.timezone !== 'Asia/Shanghai'
+          );
         }
         return parsed;
       }

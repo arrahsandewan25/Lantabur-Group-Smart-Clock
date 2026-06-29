@@ -72,122 +72,38 @@ export const WorldClocks: React.FC = () => {
     switch (condition.toLowerCase()) {
       case 'sunny':
       case 'clear':
-        return isNight ? <Moon className={`w-4 h-4 ${iconColorClass}`} /> : <Sun className={`w-4 h-4 ${iconColorClass}`} />;
+        return isNight ? <Moon className={`w-4 h-4 md:w-5 h-5 lg:w-6 h-6 ${iconColorClass}`} /> : <Sun className={`w-4 h-4 md:w-5 h-5 lg:w-6 h-6 ${iconColorClass}`} />;
       case 'rainy':
-        return <CloudRain className={`w-4 h-4 ${iconColorClass}`} />;
+        return <CloudRain className={`w-4 h-4 md:w-5 h-5 lg:w-6 h-6 ${iconColorClass}`} />;
       default:
-        return <CloudSun className={`w-4 h-4 ${iconColorClass}`} />;
+        return <CloudSun className={`w-4 h-4 md:w-5 h-5 lg:w-6 h-6 ${iconColorClass}`} />;
     }
   };
 
-  const getCityStyle = (cityName: string) => {
-    const name = cityName.toLowerCase();
-    if (name.includes('dhaka')) {
+  const getCityStyle = (index: number) => {
+    if (index % 2 === 0) {
       return {
-        cardBg: 'bg-gradient-to-br from-amber-50 to-yellow-100',
-        border: 'border-amber-300',
-        textCity: 'text-amber-900 font-extrabold',
+        cardBg: 'bg-gradient-to-br from-amber-50 via-amber-100/80 to-yellow-150',
+        border: 'border-amber-300/90 shadow-[0_8px_20px_rgba(245,158,11,0.12)]',
+        textCity: 'text-amber-900 font-extrabold text-xs md:text-sm lg:text-base uppercase tracking-wider',
         textTime: 'text-amber-950 font-black',
         textSec: 'text-amber-600 font-bold',
-        textSub: 'text-amber-800 font-medium',
-        glow: 'shadow-[0_0_15px_rgba(245,158,11,0.25)] hover:shadow-[0_0_25px_rgba(245,158,11,0.45)]',
+        textSub: 'text-amber-800 font-bold text-[10px] md:text-xs lg:text-sm',
+        glow: 'hover:shadow-[0_15px_35px_rgba(245,158,11,0.35)] hover:scale-[1.03] transform transition-all duration-300',
         iconColor: 'text-amber-600'
       };
-    }
-    if (name.includes('makkah')) {
+    } else {
       return {
-        cardBg: 'bg-gradient-to-br from-orange-50 to-amber-100',
-        border: 'border-orange-300/60',
-        textCity: 'text-orange-900 font-extrabold',
+        cardBg: 'bg-gradient-to-br from-orange-50 via-orange-100/80 to-amber-150',
+        border: 'border-orange-300/80 shadow-[0_8px_20px_rgba(249,115,22,0.12)]',
+        textCity: 'text-orange-900 font-extrabold text-xs md:text-sm lg:text-base uppercase tracking-wider',
         textTime: 'text-orange-950 font-black',
         textSec: 'text-orange-600 font-bold',
-        textSub: 'text-orange-800 font-medium',
-        glow: 'shadow-[0_0_15px_rgba(249,115,22,0.25)] hover:shadow-[0_0_25px_rgba(249,115,22,0.45)]',
+        textSub: 'text-orange-800 font-bold text-[10px] md:text-xs lg:text-sm',
+        glow: 'hover:shadow-[0_15px_35px_rgba(249,115,22,0.35)] hover:scale-[1.03] transform transition-all duration-300',
         iconColor: 'text-orange-600'
       };
     }
-    if (name.includes('dubai')) {
-      return {
-        cardBg: 'bg-gradient-to-br from-yellow-50 to-orange-100',
-        border: 'border-orange-300/60',
-        textCity: 'text-amber-900 font-extrabold',
-        textTime: 'text-amber-950 font-black',
-        textSec: 'text-amber-600 font-bold',
-        textSub: 'text-amber-800 font-medium',
-        glow: 'shadow-[0_0_15px_rgba(217,119,6,0.25)] hover:shadow-[0_0_25px_rgba(217,119,6,0.45)]',
-        iconColor: 'text-amber-600'
-      };
-    }
-    if (name.includes('london')) {
-      return {
-        cardBg: 'bg-gradient-to-br from-red-50 to-rose-100',
-        border: 'border-rose-300/60',
-        textCity: 'text-rose-900 font-extrabold',
-        textTime: 'text-rose-950 font-black',
-        textSec: 'text-rose-600 font-bold',
-        textSub: 'text-rose-800 font-medium',
-        glow: 'shadow-[0_0_15px_rgba(244,63,94,0.25)] hover:shadow-[0_0_25px_rgba(244,63,94,0.45)]',
-        iconColor: 'text-rose-600'
-      };
-    }
-    if (name.includes('berlin')) {
-      return {
-        cardBg: 'bg-gradient-to-br from-orange-50 to-red-100',
-        border: 'border-orange-200',
-        textCity: 'text-orange-900 font-extrabold',
-        textTime: 'text-orange-950 font-black',
-        textSec: 'text-orange-600 font-bold',
-        textSub: 'text-orange-800 font-medium',
-        glow: 'shadow-[0_0_15px_rgba(234,88,12,0.25)] hover:shadow-[0_0_25px_rgba(234,88,12,0.45)]',
-        iconColor: 'text-orange-600'
-      };
-    }
-    if (name.includes('york')) {
-      return {
-        cardBg: 'bg-gradient-to-br from-rose-50 to-amber-100',
-        border: 'border-rose-200',
-        textCity: 'text-rose-950 font-extrabold',
-        textTime: 'text-rose-900 font-black',
-        textSec: 'text-rose-600 font-bold',
-        textSub: 'text-rose-800 font-medium',
-        glow: 'shadow-[0_0_15px_rgba(225,29,72,0.25)] hover:shadow-[0_0_25px_rgba(225,29,72,0.45)]',
-        iconColor: 'text-rose-600'
-      };
-    }
-    if (name.includes('tokyo')) {
-      return {
-        cardBg: 'bg-gradient-to-br from-pink-50 to-rose-100',
-        border: 'border-pink-300/60',
-        textCity: 'text-pink-900 font-extrabold',
-        textTime: 'text-pink-950 font-black',
-        textSec: 'text-pink-600 font-bold',
-        textSub: 'text-pink-800 font-medium',
-        glow: 'shadow-[0_0_15px_rgba(236,72,153,0.25)] hover:shadow-[0_0_25px_rgba(236,72,153,0.45)]',
-        iconColor: 'text-pink-600'
-      };
-    }
-    if (name.includes('beijing')) {
-      return {
-        cardBg: 'bg-gradient-to-br from-yellow-50 to-orange-100',
-        border: 'border-orange-400/60',
-        textCity: 'text-orange-950 font-extrabold',
-        textTime: 'text-amber-950 font-black',
-        textSec: 'text-orange-700 font-bold',
-        textSub: 'text-orange-900 font-medium',
-        glow: 'shadow-[0_0_15px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)]',
-        iconColor: 'text-orange-700'
-      };
-    }
-    return {
-      cardBg: 'bg-gradient-to-br from-amber-50 to-orange-50',
-      border: 'border-amber-200',
-      textCity: 'text-amber-900 font-extrabold',
-      textTime: 'text-amber-950 font-black',
-      textSec: 'text-amber-600 font-bold',
-      textSub: 'text-amber-800 font-medium',
-      glow: 'shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_20px_rgba(245,158,11,0.35)]',
-      iconColor: 'text-amber-600'
-    };
   };
 
   const getThemeGlow = () => {
@@ -202,51 +118,51 @@ export const WorldClocks: React.FC = () => {
   };
 
   return (
-    <section className="w-full flex flex-col gap-3">
-      <div className="flex items-center justify-between border-b border-white/5 pb-1.5">
-        <h2 className="text-xs font-display font-semibold tracking-wider text-slate-400 uppercase flex items-center gap-1.5">
-          <Compass className="w-4 h-4 text-cyan-400" />
+    <section className="w-full flex flex-col gap-4">
+      <div className="flex items-center justify-between border-b border-white/5 pb-2">
+        <h2 className="text-sm font-display font-bold tracking-wider text-slate-400 uppercase flex items-center gap-2">
+          <Compass className="w-5 h-5 text-cyan-400" />
           Global Operations Clocks
         </h2>
-        <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">
+        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
           Continuous Live Ticker (UTC Sync)
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-8 gap-3">
-        {settings.cities.map((city) => {
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5 lg:gap-6">
+        {settings.cities.map((city, index) => {
           const { time, seconds, ampm, date, offset, isNight } = getLocalTimeParts(city.timezone);
-          const styles = getCityStyle(city.name);
+          const styles = getCityStyle(index);
 
           return (
             <div
               key={city.id}
-              className={`rounded-xl p-2.5 flex flex-col items-center justify-center text-center relative overflow-hidden group border transition-all duration-300 ${styles.cardBg} ${styles.border} ${styles.glow}`}
+              className={`rounded-2xl p-4 md:p-6 lg:p-7 flex flex-col items-center justify-center text-center relative overflow-hidden group border transition-all duration-300 ${styles.cardBg} ${styles.border} ${styles.glow} min-h-[150px] md:min-h-[170px] lg:min-h-[190px]`}
               id={`world-clock-${city.name.toLowerCase()}`}
             >
-              {/* Subtle light/warm background glow */}
-              <div className="absolute -bottom-6 -right-6 w-12 h-12 rounded-full filter blur-lg opacity-25 pointer-events-none transition-all duration-1000 bg-amber-400/30"></div>
+              {/* Subtle warm ambient background blur glow */}
+              <div className="absolute -bottom-10 -right-10 w-24 h-24 rounded-full filter blur-xl opacity-30 pointer-events-none transition-all duration-1000 bg-amber-400/40"></div>
 
               {/* Title & Flag */}
-              <div className={`text-[10px] font-bold tracking-wider flex items-center gap-1.5 justify-center mb-1 select-none ${styles.textCity}`}>
-                <span className="text-xs">{city.flag}</span>
-                <span>{city.name}</span>
+              <div className={`flex items-center gap-2 justify-center mb-2 select-none ${styles.textCity}`}>
+                <span className="text-base md:text-lg lg:text-xl">{city.flag}</span>
+                <span className="font-extrabold tracking-widest">{city.name}</span>
               </div>
 
               {/* Large Digital Clock Display */}
-              <div className={`digital-font text-lg md:text-xl font-bold tracking-tight leading-none my-1 select-none ${styles.textTime}`}>
-                {time}<span className={`text-xs font-semibold ${styles.textSec}`}>:{seconds}</span>
+              <div className={`digital-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black tracking-tight leading-none my-2 select-none ${styles.textTime}`}>
+                {time}<span className={`text-sm md:text-base lg:text-lg xl:text-xl font-bold ml-0.5 ${styles.textSec}`}>:{seconds}</span>
               </div>
 
               {/* Period & Timezone Offset */}
-              <div className={`text-[9px] font-mono uppercase tracking-wider ${styles.textSub}`}>
-                <span className="font-bold">{ampm}</span> • {offset}
+              <div className={`font-mono uppercase tracking-wider ${styles.textSub} mb-2`}>
+                <span className="font-extrabold">{ampm}</span> • {offset}
               </div>
 
               {/* Weather Stats */}
-              <div className={`flex items-center gap-1.5 text-[8px] font-mono mt-1 ${styles.textSub}`}>
+              <div className={`flex items-center gap-2 font-mono ${styles.textSub} opacity-90 group-hover:opacity-100 transition-opacity`}>
                 {getWeatherIcon(city.weatherCondition, isNight, styles.iconColor)}
-                <span>{city.tempOffset}°C</span>
+                <span className="font-bold">{city.tempOffset}°C</span>
               </div>
             </div>
           );
