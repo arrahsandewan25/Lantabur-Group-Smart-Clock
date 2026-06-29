@@ -81,12 +81,12 @@ export const WorldClocks: React.FC = () => {
   };
 
   const CITY_BACKGROUNDS: Record<string, string> = {
-    'dhaka': 'https://images.unsplash.com/photo-1608958416719-797745778a4f?auto=format&fit=crop&q=90&w=3840',
-    'makkah': 'https://images.unsplash.com/photo-1591604021695-0c69b7c05981?auto=format&fit=crop&q=90&w=3840',
-    'dubai': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=90&w=3840',
-    'london': 'https://images.unsplash.com/photo-1513635269975-59663e0ca1ad?auto=format&fit=crop&q=90&w=3840',
-    'berlin': 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?auto=format&fit=crop&q=90&w=3840',
-    'new york': 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=90&w=3840'
+    'dhaka': '/Dhaka.jpg',
+    'makkah': '/Makkah.jpg',
+    'dubai': '/Dubai.jpg',
+    'london': '/London.jpg',
+    'berlin': '/Berlin.jpg',
+    'new york': '/New York.jpg'
   };
 
   const getCityTheme = (cityName: string) => {
@@ -203,7 +203,7 @@ export const WorldClocks: React.FC = () => {
               {/* Ultra High Resolution City Background Image */}
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-110 pointer-events-none"
-                style={{ backgroundImage: `url(${styles.bg})` }}
+                style={{ backgroundImage: `url('${styles.bg}')` }}
               />
               
               {/* Elegant dark semi-transparent glassmorphism gradient overlay */}

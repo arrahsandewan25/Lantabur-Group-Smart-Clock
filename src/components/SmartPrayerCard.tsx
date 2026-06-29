@@ -115,22 +115,22 @@ export const SmartPrayerCard: React.FC = () => {
       {/* High-Resolution Al-Masjid an-Nabawi Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out pointer-events-none scale-105"
-        style={{ backgroundImage: `url('https://stock.adobe.com/images/al-masjid-an-nabawi-mosque-in-medina-saudi-arabia-during-golden-hour/1884567289')` }}
+        style={{ backgroundImage: `url('/Prayer.jpg')` }}
       />
       
       {/* Elegant dark semi-transparent glassmorphism gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/45 to-slate-950/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/60 to-slate-950/50 pointer-events-none" />
 
       {/* Background soft glow based on prayer status */}
       <div className="absolute -inset-24 rounded-full filter blur-3xl opacity-10 pointer-events-none bg-current"></div>
 
       {/* Header with status badges and mute toggler */}
-      <div className="flex items-center justify-between relative z-10 border-b border-white/5 pb-2.5">
+      <div className="flex items-center justify-between relative z-10 border-b border-white/10 pb-2.5">
         <div className="flex items-center gap-2">
-          <span className="text-[9px] font-mono uppercase tracking-widest font-black bg-white/5 border border-white/10 px-2 py-0.5 rounded text-slate-300">
+          <span className="text-[9px] font-mono uppercase tracking-widest font-black bg-emerald-950/50 border border-emerald-500/40 px-2 py-0.5 rounded text-emerald-300 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
             {type === 'CURRENT' ? 'CURRENT PRAYER' : 'NEXT PRAYER'}
           </span>
-          <span className="text-[9px] text-slate-300 font-mono">
+          <span className="text-[9px] text-amber-200/90 font-mono font-medium drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)]">
             {settings.prayerMethod} • {settings.prayerMadhhab === 'Hanafi' ? 'Hanafi' : 'Standard'}
           </span>
         </div>
@@ -159,19 +159,19 @@ export const SmartPrayerCard: React.FC = () => {
         
         {/* Left Side: Detail metadata */}
         <div className="flex flex-col items-center sm:items-start lg:items-center xl:items-start text-center sm:text-left lg:text-center xl:text-left">
-          <div className="label text-slate-200 font-semibold mb-1 drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">Operational Node</div>
-          <div className="flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-1 rounded-lg backdrop-blur-md shadow-lg">
+          <div className="label text-amber-200 font-semibold mb-1 drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">Operational Node</div>
+          <div className="flex items-center gap-2 bg-slate-900/60 border border-emerald-500/30 px-3 py-1 rounded-lg backdrop-blur-md shadow-lg">
             {getPrayerIcon(prayer)}
             <div>
-              <h3 className="font-mono text-xl font-black text-white uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <h3 className="font-mono text-xl font-black text-white uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
                 {prayer}
               </h3>
-              <span className="text-[8px] font-mono text-slate-300 uppercase block drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Active Interval</span>
+              <span className="text-[8px] font-mono text-emerald-300 font-bold uppercase block drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]">Active Interval</span>
             </div>
           </div>
-          <div className="mt-2.5 space-y-0.5 text-[10px] text-slate-200 font-mono drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">
-            <div>🌅 Started: <span className="text-white font-semibold">{formatTimeHM(startTime)}</span></div>
-            <div>🌇 Target: <span className="text-white font-semibold">{formatTimeHM(endTime)}</span></div>
+          <div className="mt-2.5 space-y-0.5 text-[10px] text-amber-100/90 font-mono drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">
+            <div>🌅 Started: <span className="text-white font-extrabold">{formatTimeHM(startTime)}</span></div>
+            <div>🌇 Target: <span className="text-white font-extrabold">{formatTimeHM(endTime)}</span></div>
           </div>
         </div>
 
@@ -183,7 +183,7 @@ export const SmartPrayerCard: React.FC = () => {
               cx="80"
               cy="80"
               r={radius + 8}
-              className="text-white/5"
+              className="text-white/10"
               strokeWidth="7"
               stroke="currentColor"
               fill="transparent"
@@ -209,13 +209,13 @@ export const SmartPrayerCard: React.FC = () => {
 
           {/* Core display inside ring */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[10px] text-slate-200 font-mono tracking-widest uppercase font-bold drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">
+            <span className="text-[10px] text-emerald-300 font-mono tracking-widest uppercase font-extrabold drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">
               {type === 'CURRENT' ? 'REMAINING' : 'STARTS IN'}
             </span>
-            <span className="digital-font text-base md:text-lg text-white font-bold tracking-tight my-0.5 select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+            <span className="digital-font text-base md:text-lg text-white font-bold tracking-tight my-0.5 select-none drop-shadow-[0_2.5px_5px_rgba(0,0,0,0.95)]">
               {formatDuration(timeRemainingMs)}
             </span>
-            <span className="text-[10px] text-slate-200 font-mono font-bold drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">
+            <span className="text-[10px] text-amber-200 font-mono font-extrabold drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">
               {Math.round(progress)}% COMPLETED
             </span>
           </div>
@@ -223,8 +223,8 @@ export const SmartPrayerCard: React.FC = () => {
 
         {/* Right Side: Progress Bar details */}
         <div className="flex flex-col items-center sm:items-end lg:items-center xl:items-end text-center sm:text-right lg:text-center xl:text-right w-full sm:w-auto lg:w-full xl:w-auto">
-          <span className="label text-slate-200 font-semibold mb-1 drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">State Progress</span>
-          <div className="w-44 bg-black/40 rounded-full h-1.5 overflow-hidden border border-white/15 mb-2">
+          <span className="label text-amber-200 font-semibold mb-1 drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">State Progress</span>
+          <div className="w-44 bg-black/50 rounded-full h-1.5 overflow-hidden border border-white/20 mb-2">
             <div
               className={`h-full rounded-full transition-all duration-1000 ${
                 prayer === 'Asr' || prayer === 'Fajr' ? 'bg-amber-500' :
@@ -234,9 +234,9 @@ export const SmartPrayerCard: React.FC = () => {
               style={{ width: `${progress}%` }}
             ></div>
           </div>
-          <div className="text-[10px] text-slate-200 font-mono leading-relaxed drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.8)]">
-            <div>Next Event: <span className="text-white font-bold">{prayer === 'Isha' ? 'Tahajjud' : prayer === 'Tahajjud' ? 'Fajr' : prayer === 'Fajr' ? 'Dhuhr' : prayer === 'Dhuhr' ? 'Asr' : prayer === 'Asr' ? 'Maghrib' : 'Isha'}</span></div>
-            <div className="text-[8px] text-slate-300 uppercase tracking-widest mt-0.5">Calculations live</div>
+          <div className="text-[10px] text-amber-100/90 font-mono leading-relaxed drop-shadow-[0_1.5px_3px_rgba(0,0,0,0.95)]">
+            <div>Next Event: <span className="text-amber-300 font-extrabold">{prayer === 'Isha' ? 'Tahajjud' : prayer === 'Tahajjud' ? 'Fajr' : prayer === 'Fajr' ? 'Dhuhr' : prayer === 'Dhuhr' ? 'Asr' : prayer === 'Asr' ? 'Maghrib' : 'Isha'}</span></div>
+            <div className="text-[8px] text-emerald-400 uppercase tracking-widest font-black mt-0.5">Calculations live</div>
           </div>
         </div>
 
